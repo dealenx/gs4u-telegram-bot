@@ -64,5 +64,3 @@ This project is licensed under the [Your License Name] License. See the LICENSE 
 Contact:
 
 For any questions or feedback, please contact [Your Email Address or GitHub Username].
-
-384/12,000

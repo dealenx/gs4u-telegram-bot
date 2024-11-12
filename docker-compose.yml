@@ -1,0 +1,21 @@
+# docker-compose.yml
+
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: uvicorn main:app --host 0.0.0.0
+    volumes:
+      - .:/app
+    ports:
+      - 15201:8000
+    environment:
+      - MEDIA_FOLDER=/app/media
+      - SAMSON_API_KEY=${SAMSON_API_KEY}
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"   # количество файлов
+        max-size: "10m" # размер файла лога
+
