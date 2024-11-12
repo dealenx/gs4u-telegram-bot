@@ -1,0 +1,2177 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+	<script>
+	Joomla = window.Joomla || {}, Joomla.editors = Joomla.editors || {}, Joomla.editors.instances = Joomla.editors.instances || {},
+		function(e, t) {
+			"use strict";
+			e.submitform = function(e, o, n) {
+				o || (o = t.getElementById("adminForm")), e && (o.task.value = e), o.noValidate = !n, n ? o.hasAttribute("novalidate") && o.removeAttribute("novalidate") : o.setAttribute("novalidate", "");
+				var r = t.createElement("input");
+				r.style.display = "none", r.type = "submit", o.appendChild(r).click(), o.removeChild(r)
+			}, e.submitbutton = function(t) {
+				e.submitform(t)
+			}, e.Text = {
+				strings: {},
+				_: function(t, o) {
+					var n = e.getOptions("joomla.jtext");
+					return n && (this.load(n), e.loadOptions({
+						"joomla.jtext": null
+					})), o = void 0 === o ? "" : o, t = t.toUpperCase(), void 0 !== this.strings[t] ? this.strings[t] : o
+				},
+				load: function(e) {
+					for(var t in e) e.hasOwnProperty(t) && (this.strings[t.toUpperCase()] = e[t]);
+					return this
+				}
+			}, e.JText = e.Text, e.optionsStorage = e.optionsStorage || null, e.getOptions = function(t, o) {
+				return e.optionsStorage || e.loadOptions(), void 0 !== e.optionsStorage[t] ? e.optionsStorage[t] : o
+			}, e.loadOptions = function(o) {
+				if(!o) {
+					for(var n, r, a, i = t.querySelectorAll(".joomla-script-options.new"), s = 0, l = 0, d = i.length; l < d; l++) n = (r = i[l]).text || r.textContent, (a = JSON.parse(n)) && (e.loadOptions(a), s++), r.className = r.className.replace(" new", " loaded");
+					if(s) return
+				}
+				if(e.optionsStorage) {
+					if(o)
+						for(var c in o) o.hasOwnProperty(c) && (e.optionsStorage[c] = o[c])
+				} else e.optionsStorage = o || {}
+			}, e.replaceTokens = function(e) {
+				if(/^[0-9A-F]{32}$/i.test(e)) {
+					var o, n, r, a = t.getElementsByTagName("input");
+					for(o = 0, r = a.length; o < r; o++) "hidden" == (n = a[o]).type && "1" == n.value && 32 == n.name.length && (n.name = e)
+				}
+			}, e.isEmail = function(e) {
+				console.warn("Joomla.isEmail() is deprecated, use the formvalidator instead");
+				return /^[\w.!#$%&‚Äô*+\/=?^`{|}~-]+@[a-z0-9-]+(?:\.[a-z0-9-]{2,})+$/i.test(e)
+			}, e.checkAll = function(e, t) {
+				if(!e.form) return !1;
+				t = t || "cb";
+				var o, n, r, a = 0;
+				for(o = 0, r = e.form.elements.length; o < r; o++)(n = e.form.elements[o]).type == e.type && 0 === n.id.indexOf(t) && (n.checked = e.checked, a += n.checked ? 1 : 0);
+				return e.form.boxchecked && (e.form.boxchecked.value = a), !0
+			}, e.renderMessages = function(o) {
+				e.removeMessages();
+				var n, r, a, i, s, l, d, c = t.getElementById("system-message-container");
+				for(n in o)
+					if(o.hasOwnProperty(n)) {
+						r = o[n], a = t.createElement("div"), d = "notice" === n ? "alert-info" : "alert-" + n, d = "message" === n ? "alert-success" : d, d = "error" === n ? "alert-error alert-danger" : d, a.className = "alert " + d;
+						var u = t.createElement("button");
+						for(u.setAttribute("type", "button"), u.setAttribute("data-dismiss", "alert"), u.className = "close", u.innerHTML = "×", a.appendChild(u), void 0 !== e.JText._(n) && ((i = t.createElement("h4")).className = "alert-heading", i.innerHTML = e.JText._(n), a.appendChild(i)), s = r.length - 1; s >= 0; s--)(l = t.createElement("div")).innerHTML = r[s], a.appendChild(l);
+						c.appendChild(a)
+					}
+			}, e.removeMessages = function() {
+				for(var e = t.getElementById("system-message-container"); e.firstChild;) e.removeChild(e.firstChild);
+				e.style.display = "none", e.offsetHeight, e.style.display = ""
+			}, e.ajaxErrorsMessages = function(t, o, n) {
+				var r = {};
+				if("parsererror" === o) {
+					for(var a = t.responseText.trim(), i = [], s = a.length - 1; s >= 0; s--) i.unshift(["&#", a[s].charCodeAt(), ";"].join(""));
+					a = i.join(""), r.error = [e.JText._("JLIB_JS_AJAX_ERROR_PARSE").replace("%s", a)]
+				} else "nocontent" === o ? r.error = [e.JText._("JLIB_JS_AJAX_ERROR_NO_CONTENT")] : "timeout" === o ? r.error = [e.JText._("JLIB_JS_AJAX_ERROR_TIMEOUT")] : "abort" === o ? r.error = [e.JText._("JLIB_JS_AJAX_ERROR_CONNECTION_ABORT")] : t.responseJSON && t.responseJSON.message ? r.error = [e.JText._("JLIB_JS_AJAX_ERROR_OTHER").replace("%s", t.status) + " <em>" + t.responseJSON.message + "</em>"] : t.statusText ? r.error = [e.JText._("JLIB_JS_AJAX_ERROR_OTHER").replace("%s", t.status) + " <em>" + t.statusText + "</em>"] : r.error = [e.JText._("JLIB_JS_AJAX_ERROR_OTHER").replace("%s", t.status)];
+				return r
+			}, e.isChecked = function(e, o) {
+				if(void 0 === o && (o = t.getElementById("adminForm")), o.boxchecked.value = e ? parseInt(o.boxchecked.value) + 1 : parseInt(o.boxchecked.value) - 1, o.elements["checkall-toggle"]) {
+					var n, r, a, i = !0;
+					for(n = 0, a = o.elements.length; n < a; n++)
+						if("checkbox" == (r = o.elements[n]).type && "checkall-toggle" != r.name && !r.checked) {
+							i = !1;
+							break
+						}
+					o.elements["checkall-toggle"].checked = i
+				}
+			}, e.popupWindow = function(e, t, o, n, r) {
+				var a = (screen.width - o) / 2,
+					i = "height=" + n + ",width=" + o + ",top=" + (screen.height - n) / 2 + ",left=" + a + ",scrollbars=" + r + ",resizable";
+				window.open(e, t, i).window.focus()
+			}, e.tableOrdering = function(o, n, r, a) {
+				void 0 === a && (a = t.getElementById("adminForm")), a.filter_order.value = o, a.filter_order_Dir.value = n, e.submitform(r, a)
+			}, window.writeDynaList = function(e, o, n, r, a, i) {
+				console.warn("window.writeDynaList() is deprecated without a replacement!");
+				for(var s = t.createElement("select"), l = e.split(" "), d = 0; d < l.length; d++) {
+					var c = l[d].split("=");
+					"on" !== c[0].trim().substr(0, 2).toLowerCase() && "href" !== c[0].trim().toLowerCase() && s.setAttribute(c[0], c[1].replace(/\"/g, ""))
+				}
+				var u, m, p, h = n == r;
+				for(u = 0; u < o.length; u++)
+					if((p = o[u])[0] == n) {
+						m = h ? a == p[1] : 0 === u;
+						var f = t.createElement("option");
+						f.setAttribute("value", p[1]), f.innerText = p[2], m && f.setAttribute("selected", "selected"), s.appendChild(f)
+					}
+				i ? i.appendChild(s) : t.body.appendChild(s)
+			}, window.changeDynaList = function(e, o, n, r, a) {
+				console.warn("window.changeDynaList() is deprecated without a replacement!");
+				for(var i, s, l, d, c = t.adminForm[e], u = n == r; c.firstChild;) c.removeChild(c.firstChild);
+				i = 0;
+				for(s in o) o.hasOwnProperty(s) && (l = o[s])[0] == n && ((d = new Option).value = l[1], d.text = l[2], (u && a == d.value || !u && 0 === i) && (d.selected = !0), c.options[i++] = d);
+				c.length = i
+			}, window.radioGetCheckedValue = function(e) {
+				if(console.warn("window.radioGetCheckedValue() is deprecated without a replacement!"), !e) return "";
+				var t, o = e.length;
+				if(void 0 === o) return e.checked ? e.value : "";
+				for(t = 0; t < o; t++)
+					if(e[t].checked) return e[t].value;
+				return ""
+			}, window.getSelectedValue = function(e, o) {
+				console.warn("window.getSelectedValue() is deprecated without a replacement!");
+				var n = t[e][o],
+					r = n.selectedIndex;
+				return null !== r && r > -1 ? n.options[r].value : null
+			}, window.listItemTask = function(t, o) {
+				return console.warn("window.listItemTask() is deprecated use Joomla.listItemTask() instead"), e.listItemTask(t, o)
+			}, e.listItemTask = function(e, o) {
+				var n, r = t.adminForm,
+					a = 0,
+					i = r[e];
+				if(!i) return !1;
+				for(; n = r["cb" + a];) n.checked = !1, a++;
+				return i.checked = !0, r.boxchecked.value = 1, window.submitform(o), !1
+			}, window.submitbutton = function(t) {
+				console.warn("window.submitbutton() is deprecated use Joomla.submitbutton() instead"), e.submitbutton(t)
+			}, window.submitform = function(t) {
+				console.warn("window.submitform() is deprecated use Joomla.submitform() instead"), e.submitform(t)
+			}, window.saveorder = function(e, t) {
+				console.warn("window.saveorder() is deprecated without a replacement!"), window.checkAll_button(e, t)
+			}, window.checkAll_button = function(o, n) {
+				var r, a;
+				for(console.warn("window.checkAll_button() is deprecated without a replacement!"), n = n || "saveorder", r = 0; r <= o; r++) {
+					if(!(a = t.adminForm["cb" + r])) return void alert("You cannot change the order of items, as an item in the list is `Checked Out`");
+					a.checked = !0
+				}
+				e.submitform(n)
+			}, e.loadingLayer = function(o, n) {
+				if(o = o || "show", n = n || t.body, "load" === o) {
+					var r = (e.getOptions("system.paths") || {}).root || "",
+						a = t.createElement("div");
+					a.id = "loading-logo", a.style.position = "fixed", a.style.top = "0", a.style.left = "0", a.style.width = "100%", a.style.height = "100%", a.style.opacity = "0.8", a.style.filter = "alpha(opacity=80)", a.style.overflow = "hidden", a.style["z-index"] = "10000", a.style.display = "none", a.style["background-color"] = "#fff", a.style["background-image"] = 'url("' + r + '/media/jui/images/ajax-loader.gif")', a.style["background-position"] = "center", a.style["background-repeat"] = "no-repeat", a.style["background-attachment"] = "fixed", n.appendChild(a)
+				} else t.getElementById("loading-logo") || e.loadingLayer("load", n), t.getElementById("loading-logo").style.display = "show" == o ? "block" : "none";
+				return t.getElementById("loading-logo")
+			}, e.extend = function(e, t) {
+				for(var o in t) t.hasOwnProperty(o) && (e[o] = t[o]);
+				return e
+			}, e.request = function(t) {
+				(t = e.extend({
+					url: "",
+					method: "GET",
+					data: null,
+					perform: !0
+				}, t)).method = t.data ? "POST" : t.method.toUpperCase();
+				try {
+					var o = window.XMLHttpRequest ? new XMLHttpRequest : new ActiveXObject("MSXML2.XMLHTTP.3.0");
+					if(o.open(t.method, t.url, !0), o.setRequestHeader("X-Requested-With", "XMLHttpRequest"), o.setRequestHeader("X-Ajax-Engine", "Joomla!"), "POST" === t.method) {
+						var n = e.getOptions("csrf.token", "");
+						n && o.setRequestHeader("X-CSRF-Token", n), t.headers && t.headers["Content-Type"] || o.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+					}
+					if(t.headers)
+						for(var r in t.headers) t.headers.hasOwnProperty(r) && o.setRequestHeader(r, t.headers[r]);
+					if(o.onreadystatechange = function() {
+							4 === o.readyState && (200 === o.status ? t.onSuccess && t.onSuccess.call(window, o.responseText, o) : t.onError && t.onError.call(window, o))
+						}, t.perform) {
+						if(t.onBefore && !1 === t.onBefore.call(window, o)) return o;
+						o.send(t.data)
+					}
+				} catch(e) {
+					return window.console && console.log(e), !1
+				}
+				return o
+			}
+		}(Joomla, document);
+	</script>
+	<link rel="preload" as="style" href="/templates/gs4u/css/base.css?09e24503f317bd231bc1d7eed4a1d6b1">
+	<link rel="preload" as="script" href="/templates/gs4u/js/jui/jquery.min.js?09e24503f317bd231bc1d7eed4a1d6b1">
+	<link rel="preload" as="script" href="/media/gs4u/js/server_utils.js?8.2.4">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="preconnect" href="//www.google-analytics.com" />
+	<link rel="dns-prefetch" href="//www.google-analytics.com" />
+	<meta charset="utf-8" />
+	<base href="https://www.gs4u.net/en/s/358042.html" />
+	<meta name="keywords" content="Unreal Tournament 3, UT3, SYBERIA UT, server, game, monitoring" />
+	<meta name="rights" content="Juri Hahn" />
+	<meta name="og:image" content="https://www.gs4u.net/en/160x120/s/358042.png" />
+	<meta name="og:image:width" content="160" />
+	<meta name="og:image:height" content="120" />
+	<meta name="og:url" content="https://www.gs4u.net/en/s/358042.html" />
+	<meta name="fb:app_id" content="1182420818513979" />
+	<meta name="fb:profile_id" content="1617416565188698" />
+	<meta name="og:type" content="website" />
+	<meta name="og:title" content="SYBERIA UT - UT3 server - 217.20.66.49:7777 - Russian Federation, Mezhdurechensk" />
+	<meta name="og:description" content="Monitoring of server; Game: Unreal Tournament 3 (UT3); Name: SYBERIA UT; Map: DM-Deck; Location: Russian Federation, Mezhdurechensk" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:site" content="@gs4u_net" />
+	<meta name="twitter:title" content="SYBERIA UT - UT3 server - 217.20.66.49:7777 - Russian Federation, Mezhdurechensk" />
+	<meta name="twitter:description" content="Monitoring of server; Game: Unreal Tournament 3 (UT3); Name: SYBERIA UT; Map: DM-Deck; Location: Russian Federation, Mezhdurechensk" />
+	<meta name="twitter:image" content="https://www.gs4u.net/en/160x120/s/358042.png" />
+	<meta name="twitter:url" content="https://www.gs4u.net/en/s/358042.html" />
+	<meta name="description" content="Monitoring of server; Game: Unreal Tournament 3 (UT3); Name: SYBERIA UT; Map: DM-Deck; Location: Russian Federation, Mezhdurechensk" />
+	<meta name="generator" content="Joomla! - Open Source Content Management" />
+	<title>SYBERIA UT - UT3 server - 217.20.66.49:7777 - Russian Federation, Mezhdurechensk</title>
+	<link href="/templates/gs4u/favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />
+	<link href="https://www.gs4u.net/en/s/358042.html" rel="alternate" hreflang="en" />
+	<link href="https://www.gs4u.net/ru/s/358042.html" rel="alternate" hreflang="ru" />
+	<link href="https://www.gs4u.net/de/s/358042.html" rel="alternate" hreflang="de" />
+	<link href="https://www.gs4u.net/tr/s/358042.html" rel="alternate" hreflang="tr" />
+	<link href="https://www.gs4u.net/ua/s/358042.html" rel="alternate" hreflang="ua" />
+	<link href="/media/jui/css/jquery.minicolors.css?09e24503f317bd231bc1d7eed4a1d6b1" rel="stylesheet" />
+	<link href="/templates/gs4u/css/base.css?09e24503f317bd231bc1d7eed4a1d6b1" rel="stylesheet" />
+	<link href="/templates/gs4u/css/all.css?09e24503f317bd231bc1d7eed4a1d6b1" rel="stylesheet" />
+	<style>
+	.mod_gs4u_server_adv {
+		overflow: hidden;
+		text-align: center;
+	}
+
+	.mod_gs4u_server_adv .pane {
+		display: inline-block;
+		text-align: left;
+		border: 1px solid #444;
+		padding: 7px;
+		vertical-align: top;
+		margin-bottom: 20px;
+		max-width: 92%;
+	}
+
+	.mod_gs4u_server_adv .pane.top1 {
+		border-color: #777;
+	}
+
+	.mod_gs4u_server_adv .topserver .title,
+	.mod_gs4u_server_adv .topserver .second_title {
+		color: #eee;
+		font-size: 17px;
+	}
+
+	.mod_gs4u_server_adv .topserver .second_title {
+		font-size: 12px;
+		margin-bottom: 10px;
+	}
+
+	.mod_gs4u_server_adv .topserver .name {
+		word-wrap: break-word;
+		text-decoration: underline;
+		font-weight: bold;
+		font-size: 17px;
+		color: #db8;
+	}
+
+	.mod_gs4u_server_adv .topserver .name.n2,
+	.mod_gs4u_server_adv .topserver .name.n3,
+	.mod_gs4u_server_adv .topserver .name.n4,
+	.mod_gs4u_server_adv .topserver .position {
+		font-size: 14px;
+		color: #999;
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.mod_gs4u_server_adv .topserver .item.n2 {
+		margin-bottom: 9px;
+	}
+
+	.mod_gs4u_server_adv .topserver .ipport,
+	.mod_gs4u_server_adv .topserver .gamename {
+		color: #CCC;
+		font-size: 14px;
+		word-wrap: break-word;
+	}
+
+	.mod_gs4u_server_adv .topserver .gamename {
+		font-size: 12px;
+	}
+
+	#login_dialog .loading-container {
+		text-align: center;
+		margin: 50px;
+	}
+
+	#cookie-bar {
+		background: #555;
+		height: auto;
+		line-height: 24px;
+		color: #eeeeee;
+		text-align: center;
+		padding: 3px 0;
+	}
+
+	#cookie-bar.fixed {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+	}
+
+	#cookie-bar.fixed.bottom {
+		bottom: 0;
+		top: auto;
+	}
+
+	#cookie-bar p {
+		margin: 0;
+		padding: 0;
+		margin-bottom: 10px;
+	}
+
+	#cookie-bar a {
+		color: #ffffff;
+		display: inline-block;
+		border-radius: 3px;
+		text-decoration: none;
+		padding: 0 6px;
+		margin-left: 8px;
+	}
+
+	#cookie-bar .cb-enable {
+		background: #D59120;
+		margin-top: 5px;
+		margin-bottom: 5px;
+		padding-left: 50px;
+		padding-right: 50px;
+	}
+
+	#cookie-bar .cb-enable:hover {
+		background: #E6A231;
+	}
+
+	#cookie-bar .cb-disable {
+		background: #999;
+		margin-top: 5px;
+		margin-bottom: 5px;
+	}
+
+	#cookie-bar .cb-disable:hover {
+		background: #444;
+	}
+
+	#cookie-bar .cb-policy {
+		background: #999;
+		margin-top: 5px;
+		margin-bottom: 5px;
+	}
+
+	#cookie-bar .cb-policy:hover {
+		background: #444;
+	}
+
+	div.mod-languages ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	div.mod-languages li {
+		margin-left: 5px;
+		margin-right: 5px;
+	}
+
+	div.mod-languages ul.lang-inline li {
+		display: inline;
+	}
+
+	div.mod-languages ul.lang-block li {
+		display: block;
+	}
+
+	div.mod-languages img {
+		border: none;
+	}
+
+	div.mod-languages a {
+		text-decoration: none;
+	}
+	</style>
+	<script type="application/json" class="joomla-script-options new">{"csrf.token":"9d5c4ef551a4667f3db2026c13eed8e1","system.paths":{"root":"","base":""},"joomla.jtext":{"GS4U__DAYS1":"days","GS4U__DAY":"day","GS4U__DAYS2":"days","GS4U__HOURS1":"hours","GS4U__HOUR":"hour","GS4U__HOURS2":"hours","GS4U__MINITS1":"minutes","GS4U__MINIT2":"minute","GS4U__MINITS2":"minutes","GS4U__SECONDS1":"seconds","GS4U__SECOND2":"second","GS4U__SECONDS2":"seconds","GS4U__AGO":"ago","GS4U__AGO_FIRST":"0","GS4U__BEGININFORMER":"Start of GS4u.net informer","GS4U__ENDOFINFORMER":"End of GS4u.net informer","GS4U__ACTION_COPY":"Click to copy","GS4U__ACTION_COPIED":"Copied","GS4U__STATUS_OF_SERVER":"Status of server"}}</script>
+	<script src="/templates/gs4u/js/jui/jquery.min.js?09e24503f317bd231bc1d7eed4a1d6b1"></script>
+	<script src="/media/jui/js/jquery-migrate.min.js?09e24503f317bd231bc1d7eed4a1d6b1" async defer></script>
+	<script src="/media/jui/js/bootstrap.min.js?09e24503f317bd231bc1d7eed4a1d6b1" defer></script>
+	<script src="/media/jui/js/chosen.jquery.min.js?09e24503f317bd231bc1d7eed4a1d6b1" defer></script>
+	<script src="/media/gs4u/js/jquery.tablesorter.min.js?8.2.4" defer></script>
+	<script src="/media/gs4u/js/server_utils.js?8.2.4"></script>
+	<script src="/media/gs4u/js/json.com.js?8.2.4" defer></script>
+	<script src="/media/jui/js/jquery.minicolors.min.js?09e24503f317bd231bc1d7eed4a1d6b1" defer></script>
+	<script src="/media/gs4u/js/Chart.bundle.min.js?8.2.4" defer async></script>
+	<!--[if lt IE 9]><script src="/media/jui/js/html5.js?09e24503f317bd231bc1d7eed4a1d6b1"></script><![endif]-->
+	<script>
+	jQuery(function($) {
+		initChosen();
+		$("body").on("subform-row-add", initChosen);
+
+		function initChosen(event, container) {
+			container = container || document;
+			$(container).find("select").chosen({
+				"disable_search_threshold": 10,
+				"search_contains": true,
+				"allow_single_deselect": true,
+				"placeholder_text_multiple": "Type or select some options",
+				"placeholder_text_single": "Select an option",
+				"no_results_text": "No results match"
+			});
+		}
+	});
+	jQuery(function($) {
+		initTooltips();
+		$("body").on("subform-row-add", initTooltips);
+
+		function initTooltips(event, container) {
+			container = container || document;
+			$(container).find(".hasTooltip").tooltip({
+				"html": true,
+				"container": "body"
+			});
+		}
+	});
+	GS4U_SYSTEM_BASEURL = "https://www.gs4u.net/en";
+	GS4U_SYSTEM_NOWTIME = "1731426715";
+	GS4U_LANGUAGES = {
+		"en": "English",
+		"ru": "Russian",
+		"de": "German",
+		"tr": "Turkish",
+		"ua": "Ukrainian"
+	};
+	ERROR_NO_ERROR = "0";
+	ERROR_LOGINERROR = "-1";
+	ERROR_HTTP_TIMEOUT = "-7000";
+	ERROR_HTTP_ABORT = "-7001";
+	ERROR_UNKNOWN = "-2";
+	ERROR_JSON_PARSERERROR = "-7002";
+	ERROR_JSONRPC_NOT_ALLOWED = "-9008";
+	ERROR_JSONRPC_BAD_TOKEN = "-9009";
+	window["JSONURL"] = "/en/json";
+	GS4U_SYSTEM_CACHETIME = 120;
+	GS4U_SYSTEM_AKTUALSERVERCACHETIME = "1731426686";
+	GS4U_SYSTEM_SERVERID = 358042;
+	GS4U_SYSTEM_SERVERRATING = 0;
+	GS4U_SYSTEM_ACTUALGAMETYPE = "ut3";
+	GS4U_SYSTEM_SERVERORGIP = "217.20.66.49";
+	GS4U_SYSTEM_SERVERPORT = "7777";
+	GS4U_SYSTEM_SERVERPUNITIVETIME = "0";
+	GS4U_SYSTEM_ACTUAL_SERVER_GAME_NAME = "Unreal Tournament 3";
+	GS4U_SYSTEM_ACTUAL_SERVER_NAME = "SYBERIA UT";
+	jQuery(document).ready(function($) {
+		$('#server_description').on('show.bs.modal', function() {
+			$('body').addClass('modal-open');
+			$('#server_description, #server_description .modal-header .close').on('touch click', function() {
+				$('#server_description').modal('hide');
+			});
+			$('#server_description .modal-dialog').on('touch click', function(e) {
+				e.stopPropagation();
+			});
+		}).on('hide.bs.modal', function() {
+			$('body').removeClass('modal-open');
+		});
+	});
+	jQuery(function($) {
+		$("#tabs-inner a").click(function(e) {
+			e.preventDefault();
+			$(this).tab("show");
+		});
+	});
+	jQuery(function($) {
+		$("#tabs-innerTabs").append($("<li class=\" active\"><a href=\"#tabs-inner-serverplayers\" data-toggle=\"tab\">Players<\/a><\/li>"));
+	});
+	jQuery(function($) {
+		$("#tabs-innerTabs").append($("<li class=\"\"><a href=\"#tabs-inner-serverbaners\" data-toggle=\"tab\">Banners<\/a><\/li>"));
+	});
+	jQuery(document).ready(function() {
+		jQuery('.minicolors').each(function() {
+			jQuery(this).minicolors({
+				control: jQuery(this).attr('data-control') || 'hue',
+				format: jQuery(this).attr('data-validate') === 'color' ? 'hex' : (jQuery(this).attr('data-format') === 'rgba' ? 'rgb' : jQuery(this).attr('data-format')) || 'hex',
+				keywords: jQuery(this).attr('data-keywords') || '',
+				opacity: jQuery(this).attr('data-format') === 'rgba' ? true : false || false,
+				position: jQuery(this).attr('data-position') || 'default',
+				theme: 'bootstrap'
+			});
+		});
+	});
+	jQuery(function($) {
+		$('#server_baners').collapse({
+			"parent": false,
+			"toggle": false
+		})
+	});
+	window["GS4U_BANNER_160x120_HTML_CODE"] = '<!-- Start of GS4u.net informer 160x120 --><a href="https://www.gs4u.net/en/s/358042.html" target="_blank"><picture><source srcset="https://www.gs4u.net/en/160x120#BGCOLOR#/s/358042.png 1x, https://www.gs4u.net/en/160x120x2#BGCOLOR#/s/358042.png 2x"><img style="width:160px;height:120px;" alt="Unreal Tournament 3 Server SYBERIA UT" title="SYBERIA UT" src="https://www.gs4u.net/en/160x120#BGCOLOR#/s/358042.png"></picture></a><!-- End of GS4u.net informer 160x120 -->';
+	window["GS4U_BANNER_160x120_BB_CODE"] = '[url=https://www.gs4u.net/en/s/358042.html][img]https://www.gs4u.net/en/160x120#BGCOLOR#/s/358042.png[/img][/url]';
+	jQuery(function($) {
+		$("#160x120 a").click(function(e) {
+			e.preventDefault();
+			$(this).tab("show");
+		});
+	});
+	jQuery(function($) {
+		$("#160x120Tabs").append($("<li class=\" active\"><a href=\"#160x120-html\" data-toggle=\"tab\">HTML code<\/a><\/li>"));
+	});
+	jQuery(function($) {
+		$("#160x120Tabs").append($("<li class=\"\"><a href=\"#160x120-bb\" data-toggle=\"tab\">BB code for forums<\/a><\/li>"));
+	});
+	window["GS4U_BANNER_160x75_HTML_CODE"] = '<!-- Start of GS4u.net informer 160x75 --><a href="https://www.gs4u.net/en/s/358042.html" target="_blank"><picture><source srcset="https://www.gs4u.net/en/160x75#BGCOLOR#/s/358042.png 1x, https://www.gs4u.net/en/160x75x2#BGCOLOR#/s/358042.png 2x"><img style="width:160px;height:75px;" alt="Unreal Tournament 3 Server SYBERIA UT" title="SYBERIA UT" src="https://www.gs4u.net/en/160x75#BGCOLOR#/s/358042.png"></picture></a><!-- End of GS4u.net informer 160x75 -->';
+	window["GS4U_BANNER_160x75_BB_CODE"] = '[url=https://www.gs4u.net/en/s/358042.html][img]https://www.gs4u.net/en/160x75#BGCOLOR#/s/358042.png[/img][/url]';
+	jQuery(function($) {
+		$("#160x75 a").click(function(e) {
+			e.preventDefault();
+			$(this).tab("show");
+		});
+	});
+	jQuery(function($) {
+		$("#160x75Tabs").append($("<li class=\" active\"><a href=\"#160x75-html\" data-toggle=\"tab\">HTML code<\/a><\/li>"));
+	});
+	jQuery(function($) {
+		$("#160x75Tabs").append($("<li class=\"\"><a href=\"#160x75-bb\" data-toggle=\"tab\">BB code for forums<\/a><\/li>"));
+	});
+	window["GS4U_BANNER_350x20_HTML_CODE"] = '<!-- Start of GS4u.net informer 350x20 --><a href="https://www.gs4u.net/en/s/358042.html" target="_blank"><picture><source srcset="https://www.gs4u.net/en/350x20#BGCOLOR#/s/358042.png 1x, https://www.gs4u.net/en/350x20x2#BGCOLOR#/s/358042.png 2x"><img style="width:350px;height:20px;" alt="Unreal Tournament 3 Server SYBERIA UT" title="SYBERIA UT" src="https://www.gs4u.net/en/350x20#BGCOLOR#/s/358042.png"></picture></a><!-- End of GS4u.net informer 350x20 -->';
+	window["GS4U_BANNER_350x20_BB_CODE"] = '[url=https://www.gs4u.net/en/s/358042.html][img]https://www.gs4u.net/en/350x20#BGCOLOR#/s/358042.png[/img][/url]';
+	jQuery(function($) {
+		$("#350x20 a").click(function(e) {
+			e.preventDefault();
+			$(this).tab("show");
+		});
+	});
+	jQuery(function($) {
+		$("#350x20Tabs").append($("<li class=\" active\"><a href=\"#350x20-html\" data-toggle=\"tab\">HTML code<\/a><\/li>"));
+	});
+	jQuery(function($) {
+		$("#350x20Tabs").append($("<li class=\"\"><a href=\"#350x20-bb\" data-toggle=\"tab\">BB code for forums<\/a><\/li>"));
+	});
+	window["GS4U_BANNER_56x15_HTML_CODE"] = '<!-- Start of GS4u.net informer 56x15 --><a href="https://www.gs4u.net/en/s/358042.html" target="_blank"><picture><source srcset="https://www.gs4u.net/en/56x15#BGCOLOR#/s/358042.png 1x, https://www.gs4u.net/en/56x15x2#BGCOLOR#/s/358042.png 2x"><img style="width:56px;height:15px;" alt="Unreal Tournament 3 Server SYBERIA UT" title="SYBERIA UT" src="https://www.gs4u.net/en/56x15#BGCOLOR#/s/358042.png"></picture></a><!-- End of GS4u.net informer 56x15 -->';
+	window["GS4U_BANNER_56x15_BB_CODE"] = '[url=https://www.gs4u.net/en/s/358042.html][img]https://www.gs4u.net/en/56x15#BGCOLOR#/s/358042.png[/img][/url]';
+	jQuery(function($) {
+		$("#56x15 a").click(function(e) {
+			e.preventDefault();
+			$(this).tab("show");
+		});
+	});
+	jQuery(function($) {
+		$("#56x15Tabs").append($("<li class=\" active\"><a href=\"#56x15-html\" data-toggle=\"tab\">HTML code<\/a><\/li>"));
+	});
+	jQuery(function($) {
+		$("#56x15Tabs").append($("<li class=\"\"><a href=\"#56x15-bb\" data-toggle=\"tab\">BB code for forums<\/a><\/li>"));
+	});
+	jQuery(function($) {
+		$("#webmodul a").click(function(e) {
+			e.preventDefault();
+			$(this).tab("show");
+		});
+	});
+	jQuery(function($) {
+		$("#webmodulTabs").append($("<li class=\" active\"><a href=\"#webmodul-html\" data-toggle=\"tab\">HTML code<\/a><\/li>"));
+	});
+	jQuery(function($) {
+		$("#json a").click(function(e) {
+			e.preventDefault();
+			$(this).tab("show");
+		});
+	});
+	jQuery(function($) {
+		$("#jsonTabs").append($("<li class=\" active\"><a href=\"#json-html\" data-toggle=\"tab\">HTML code<\/a><\/li>"));
+	});
+	jQuery(function($) {
+		$("#jsonTabs").append($("<li class=\"\"><a href=\"#json-bb\" data-toggle=\"tab\">Address of JSON object:<\/a><\/li>"));
+	});
+	jQuery(function($) {
+		$("#tabs-innerTabs").append($("<li class=\"\"><a href=\"#tabs-inner-serveroptions\" data-toggle=\"tab\">Options<\/a><\/li>"));
+	});
+	jQuery(function($) {
+		$("#tabs-innerTabs").append($("<li class=\"\"><a href=\"#tabs-inner-statistic\" data-toggle=\"tab\">Statistics<\/a><\/li>"));
+	});
+	LANG = "en";
+	jQuery(document).ready(function() {
+		jQuery('.toLocalTime').each(function(i, e) {
+			let el = jQuery(e);
+			let t = el.html();
+			t = t.replace(' UTC', '');
+			t = t.replace(' ', 'T') + '.000Z';
+			let d = new Date(t);
+			el.html(d.toLocaleDateString(undefined, {
+				year: 'numeric',
+				month: '2-digit',
+				day: '2-digit'
+			}) + ' ' + d.toLocaleTimeString());
+		});
+	});
+	jQuery(document).ready(function($) {
+		$('#a_href_modal_image').on('show.bs.modal', function() {
+			$('body').addClass('modal-open');
+			$('#a_href_modal_image, #a_href_modal_image .modal-header .close').on('touch click', function() {
+				$('#a_href_modal_image').modal('hide');
+			});
+			$('#a_href_modal_image .modal-dialog').on('touch click', function(e) {
+				e.stopPropagation();
+			});
+		}).on('hide.bs.modal', function() {
+			$('body').removeClass('modal-open');
+		});
+	});
+	jQuery(document).ready(function($) {
+		$('#login_dialog').on('show.bs.modal', function() {
+			$('body').addClass('modal-open');
+			$('#login_dialog, #login_dialog .modal-header .close').on('touch click', function() {
+				$('#login_dialog').modal('hide');
+			});
+			$('#login_dialog .modal-dialog').on('touch click', function(e) {
+				e.stopPropagation();
+			});
+		}).on('hide.bs.modal', function() {
+			$('body').removeClass('modal-open');
+		});
+	});
+	COOCKIEBAR_OPTIONS = {
+		message: "In order to optimize our website for you and to be able to continuously improve it, we use cookies. By continuing to use the website, you agree to the use of cookies.<br>",
+		acceptText: "OK",
+		declineText: "Decline",
+		policyText: "Privacy policy",
+		autoEnable: true,
+		acceptOnContinue: false,
+		acceptOnScroll: false,
+		acceptAnyClick: false,
+		policyURL: "/privacy-policy",
+		expireDays: 365,
+		renewOnVisit: true,
+		acceptButton: true,
+		declineButton: true,
+		policyButton: true,
+		zindex: 12,
+		forceShow: false,
+		effect: "slide",
+		fixed: true,
+		bottom: true,
+		acceptFunction: function() {
+			return null;
+		},
+		declineFunction: function() {
+			return null;
+		}
+	}
+	jQuery.noConflict();
+	! function(r) {
+		var e = {
+			sendRequest: function(e, o, a, n, s, t) {
+				var u = "json";
+				s ? u = s : window.JSONURL && (u = window.JSONURL);
+				var R = {
+					data: [{
+						method: e,
+						params: o,
+						id: 1
+					}]
+				};
+				t && t.name && t.value && (R[t.name] = t.value), r.ajax({
+					url: u,
+					type: "POST",
+					async: !0,
+					cache: !1,
+					data: R,
+					dataType: "json",
+					success: function(r) {
+						if(r) {
+							if(null != r[0].error && n) {
+								e = {
+									error_code: -1,
+									return: null,
+									error: {
+										message: "unknown",
+										code: ERROR_UNKNOWN
+									}
+								};
+								return null != r[0].error && (r[0].error_code = r[0].error.code), void n(r[0])
+							}
+							r[0].result ? a && a(r[0].result) : n && n(r)
+						} else if(n) {
+							var e = {
+								error_code: -1,
+								return: null,
+								error: {
+									message: "unknown",
+									code: ERROR_UNKNOWN
+								}
+							};
+							n(e)
+						}
+					},
+					error: function(r, e, o) {
+						var a = [];
+						switch(a[0] = {
+							error_code: -1,
+							return: null,
+							error: {
+								message: e,
+								code: ERROR_UNKNOWN
+							}
+						}, a[0].error.message) {
+							case "timeout":
+								a[0].error.error_code = ERROR_HTTP_TIMEOUT, a[0].error.message = "timeout";
+								break;
+							case "abort":
+								a[0].error.error_code = ERROR_HTTP_ABORT, a[0].error.message = "abort";
+								break;
+							case "parsererror":
+								a[0].error.error_code = ERROR_JSON_PARSERERROR, a[0].error.message = "parsererror";
+								break;
+							default:
+								a[0].error.error_code = ERROR_UNKNOWN, a[0].error.message = "unknown"
+						}
+						n && n(a[0])
+					}
+				})
+			}
+		};
+		r.fn.json = function(o) {
+			return e[o] ? e[o].apply(this, Array.prototype.slice.call(arguments, 1)) : "object" != typeof o && o ? void r.error("Method " + o + " does not exist on jQuery.json") : e.init.apply(this, arguments)
+		}
+	}(jQuery);
+
+	function hexToRgb(e) {
+		var t = parseInt(e, 16);
+		return [t >> 16 & 255, t >> 8 & 255, 255 & t]
+	}
+
+	function initTooltip(e, t) {
+		jQuery(e).tooltip({
+			html: !0,
+			container: "body"
+		}), t && jQuery(".hasTooltip", e).tooltip({
+			html: !0,
+			container: "body"
+		})
+	}
+
+	function showSmallPopUp(e, t) {
+		let o = 0,
+			a = 0;
+		if(t) {
+			let e = jQuery(t).offset();
+			o = e.top, a = e.left
+		}
+		let n = jQuery("#small_popup");
+		n.css({
+			top: o + "px",
+			left: a + "px"
+		}), n.html(e), n.css({
+			display: ""
+		}), n.css({
+			opacity: "1"
+		}), setTimeout(function() {
+			n.css({
+				opacity: "0"
+			}), setTimeout(function() {
+				n.css({
+					display: "none"
+				})
+			}, 1e3)
+		}, 1e3)
+	}
+
+	function addCopyEventListener(e, t) {
+		let o = jQuery('<div id="small_popup">');
+		o.css({
+			display: "none"
+		}), jQuery("body").append(o), jQuery("#" + e).on("touch click", function() {
+			copyToClipboard(document.getElementById(t))
+		})
+	}
+
+	function copyToClipboard(e) {
+		if(e.select) e.select();
+		else if(document.body.createTextRange) {
+			let t = document.body.createTextRange();
+			t.moveToElement(e), t.select()
+		} else {
+			let t = window.getSelection(),
+				o = document.createRange();
+			o.selectNodeContents(e), t.removeAllRanges(), t.addRange(o)
+		}
+		document.execCommand("copy"), showSmallPopUp(Joomla.JText._("GS4U__ACTION_COPIED"), e), removeTextSelection()
+	}
+
+	function removeTextSelection() {
+		window.getSelection ? window.getSelection().empty ? window.getSelection().empty() : window.getSelection().removeAllRanges && window.getSelection().removeAllRanges() : document.selection && document.selection.empty()
+	}
+
+	function getServerURL(e) {
+		return GS4U_SYSTEM_BASEURL + "/s/" + e + ".html"
+	}
+
+	function open_voting_window(e) {
+		jQuery("#sbox-content").html(http_get(GS4U_SYSTEM_BASEURL + "/vote.html?id=" + e)), jQuery("select").chosen()
+	}
+
+	function http_get(e) {
+		var t = null;
+		return jQuery.ajax({
+			url: e,
+			type: "GET",
+			async: !1,
+			cache: !1,
+			success: function(e) {
+				t = e
+			},
+			error: function(e, t, o) {}
+		}), t
+	}
+
+	function getServerNowTime(e, t, o) {
+		getServerTime(e, function(e) {
+			t(1e3 * parseInt(e, 10))
+		}, o)
+	}
+
+	function get_nice_time(e, t, o, a) {
+		var n = e,
+			s = 0,
+			i = 0,
+			r = 0;
+		n > 59 && (n -= 60 * (s = Math.floor(e / 60))), s > 59 && (s -= 60 * (i = Math.floor(s / 60))), i > 23 && (i -= 24 * (r = Math.floor(i / 24)));
+		var l = "",
+			c = 0;
+		return r > 0 && (l += r, l = r >= 10 && r <= 20 ? l + " " + Joomla.JText._("GS4U__DAYS1") + " " : 1 == (c = r % 10) ? l + " " + Joomla.JText._("GS4U__DAY") + " " : c > 0 && c < 5 ? l + " " + Joomla.JText._("GS4U__DAYS2") + " " : l + " " + Joomla.JText._("GS4U__DAYS1") + " ", o) ? a ? Joomla.JText._("GS4U__AGO") + " " + l : l + Joomla.JText._("GS4U__AGO") : i > 0 && (l += i, l = i >= 10 && i <= 20 ? l + " " + Joomla.JText._("GS4U__HOURS1") + " " : 1 == (c = i % 10) ? l + " " + Joomla.JText._("GS4U__HOUR") + " " : c > 0 && c < 5 ? l + " " + Joomla.JText._("GS4U__HOURS2") + " " : l + " " + Joomla.JText._("GS4U__HOURS1") + " ", o) ? a ? Joomla.JText._("GS4U__AGO") + " " + l : l + Joomla.JText._("GS4U__AGO") : (s > 0 && (l += s, l = s >= 10 && s <= 20 ? l + " " + Joomla.JText._("GS4U__MINITS1") + " " : 1 == (c = s % 10) ? l + " " + Joomla.JText._("GS4U__MINIT2") + " " : c > 0 && c < 5 ? l + " " + Joomla.JText._("GS4U__MINITS2") + " " : l + " " + Joomla.JText._("GS4U__MINITS1") + " "), t && n > 0 && (l += n, l = n >= 10 && n <= 20 ? l + " " + Joomla.JText._("GS4U__SECONDS1") + " " : 1 == (c = n % 10) ? l + " " + Joomla.JText._("GS4U__SECOND2") + " " : c > 0 && c < 5 ? l + " " + Joomla.JText._("GS4U__SECONDS2") + " " : l + " " + Joomla.JText._("GS4U__SECONDS1") + " "), "" == l && (l = Joomla.JText._("GS4U__SECOND2") + " "), a ? Joomla.JText._("GS4U__AGO") + " " + l : l + Joomla.JText._("GS4U__AGO"))
+	}
+
+	function showStatisticForServerID(e, t, o) {
+		var a = jQuery(t + " .players_statistics"),
+			n = jQuery(t + " .rang_statistics"),
+			s = function(e) {
+				if(a.length > 0) {
+					a.empty(), a.append('<canvas id="server_players_statistic" width="400" height="200"></canvas>');
+					var t = document.getElementById("server_players_statistic").getContext("2d");
+					window.playersChart = new Chart(t, {
+						type: "line",
+						data: e.players,
+						options: plChartOptions
+					})
+				}
+				n.length > 0 && (n.empty(), n.append('<canvas id="server_rang_statistic" width="400" height="200"></canvas>'), t = document.getElementById("server_rang_statistic").getContext("2d"), window.rangChart = new Chart(t, {
+					type: "line",
+					data: e.rang,
+					options: rangChartOptions
+				}))
+			};
+		o || (o = "hour"), window.dataPlayersChart || (window.dataPlayersChart = []), window.dataPlayersChart[o] ? s(window.dataPlayersChart[o]) : getServerStatistic(e, {
+			type: o
+		}, function() {
+			a.html('<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>')
+		}, function(e) {
+			window.dataPlayersChart[o] = e, s(window.dataPlayersChart[o])
+		}, function() {
+			a.html('<i class="fa fa-exclamation-triangle fa-3x error" aria-hidden="true"></i>')
+		})
+	}
+
+	function showMessage(e, t, o, a) {
+		var n = {},
+			s = "";
+		"error" == t && (s = '<i class="fa fa-exclamation-triangle fa-3x error"></i>', n.error = [], n.error.push(s + "&nbsp;&nbsp;" + e)), "loading" == t && (s = '<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>', n.info = [], n.info.push(s + "&nbsp;&nbsp;" + e)), "success" == t && (s = '<i class="fa fa-info-circle fa-3x success"></i>', n.success = [], n.success.push(s + "&nbsp;&nbsp;" + e)), hideMessages(), Joomla.renderMessages(n), a || jQuery([document.documentElement, document.body]).animate({
+			scrollTop: jQuery("#system-message-container").offset().top
+		}, 500)
+	}
+
+	function hideMessages() {
+		Joomla.removeMessages()
+	}
+	jQuery(function(t) {
+		"use strict";
+
+		function a(a, r) {
+			t(r || document).find("*[rel=tooltip]").tooltip()
+		}
+
+		function r(a, r) {
+			var e = t(r || document);
+			e.find(".radio.btn-group label").addClass("btn"), e.find(".btn-group input:checked").each(function() {
+				var a = t(this),
+					r = t("label[for=" + a.attr("id") + "]"),
+					e = "primary";
+				if("" != a.val()) {
+					var n = a.parent().hasClass("btn-group-reversed");
+					e = (0 == a.val() ? !n : n) ? "danger" : "success"
+				}
+				r.addClass("active btn-" + e)
+			})
+		}
+		t(document).on("click", ".btn-group label:not(.active)", function() {
+			var a = t(this),
+				r = t("#" + a.attr("for"));
+			if(!r.prop("checked")) {
+				a.closest(".btn-group").find("label").removeClass("active btn-success btn-danger btn-primary");
+				var e = "primary";
+				if("" != r.val()) {
+					var n = a.closest(".btn-group").hasClass("btn-group-reversed");
+					e = (0 == r.val() ? !n : n) ? "danger" : "success"
+				}
+				a.addClass("active btn-" + e), r.prop("checked", !0).trigger("change")
+			}
+		}).on("click", "#back-top", function(a) {
+			a.preventDefault(), t("html, body").animate({
+				scrollTop: 0
+			}, 1e3)
+		}).on("subform-row-add", r).on("subform-row-add", a), r(), a()
+	});
+	const ModalLogin = {
+		tmpl: "",
+		options: [],
+		href: "",
+		init: function(o) {
+			let n = jQuery("a." + o);
+			n.bind("touch click", ModalLogin.showLoginDialog), n.each(function(o, n) {
+				$item = jQuery(n);
+				let i = $item.prop("href");
+				$item.attr("logindata", i), $item.prop("href", "javascript:void(0);"), $item.attr("name", "login-link")
+			})
+		},
+		onLoginOk: function() {
+			document.location.href = ModalLogin.href
+		},
+		startLoginIfEnter: function(o) {
+			13 == o.keyCode && ModalLogin.doLogin()
+		},
+		doLogin: function() {
+			jQuery("#modalloginform .btn.ok").hide();
+			let o = jQuery("#modalloginform #username").val(),
+				n = jQuery("#modalloginform #password").val(),
+				i = jQuery("#modalloginform #secretkey").val(),
+				e = jQuery("#modalloginform #remember").is(":checked"),
+				r = ModalLogin.onLoginOk;
+			ModalLogin.showLoginMsg("Login...", "load"), jQuery(document).json("sendRequest", "login", [o, n, i, e], function(o) {
+				o.error_code != ERROR_NO_ERROR ? (o.error_code == ERROR_JSONRPC_NOT_ALLOWED ? ModalLogin.showLoginMsg("Login is disabled", "error") : o.error_code == ERROR_JSONRPC_BAD_TOKEN ? ModalLogin.showLoginMsg("Invalid token", "error") : ModalLogin.showLoginMsg(o.error_message, "error"), jQuery("#modalloginform .btn.ok").show()) : o.return ? (ModalLogin.showLoginMsg("Login OK! Redirect...", "load"), r()) : (ModalLogin.showLoginMsg(o.error_message, "error"), jQuery("#modalloginform .btn.ok").show())
+			}, function(o) {
+				ModalLogin.showLoginMsg("Sorry, error...", "error"), jQuery("#modalloginform .btn.ok").show()
+			}, null, {
+				name: jQuery('#modalloginform input[type="hidden"]').prop("name"),
+				value: jQuery('#modalloginform input[type="hidden"]').prop("value")
+			})
+		},
+		checkInputsVisibility: function() {
+			ModalLogin.options.remember && jQuery("#modalloginform div.remember").show(), ModalLogin.options.register && jQuery("#modalloginform li.register").show(), ModalLogin.options.tfa && jQuery("#modalloginform div.secretkey").show()
+		},
+		addEvents: function() {
+			jQuery("#modalloginform #username, #modalloginform #password, #modalloginform #secretkey").bind("keydown", ModalLogin.startLoginIfEnter), jQuery("#modalloginform .btn.ok").bind("touch click", ModalLogin.doLogin)
+		},
+		showLoginDialog: function() {
+			ModalLogin.href = jQuery(this).attr("logindata");
+			jQuery("#login_dialog").modal("show");
+			let o = jQuery("#login_dialog .modal-body");
+			o.empty();
+			let n = function() {
+				o.empty().append(ModalLogin.tmpl), ModalLogin.checkInputsVisibility(), ModalLogin.addEvents()
+			};
+			return "" == ModalLogin.tmpl ? (o.html('<div class="loading-container"><i class="fa fa-spinner fa-pulse fa-4x" style=""></i></div>'), ModalLogin.loadLoginDialog(function(o) {
+				ModalLogin.tmpl = o.tmpl, ModalLogin.options = o.options, n()
+			}, function(o) {
+				ModalLogin.showError(o)
+			})) : n(), !1
+		},
+		loadLoginDialog: function(o, n) {
+			jQuery(document).json("sendRequest", "getLoginForm", [], function(i) {
+				i.error_code != ERROR_NO_ERROR ? n(i) : o(i.return)
+			}, n)
+		},
+		hideLoginDialog: function() {},
+		showLoginMsg: function(o, n) {
+			"load" == n && (o = '<i class="fa fa-spinner fa-pulse"></i> ' + o), jQuery("#modalloginform .msg").html(o)
+		},
+		showError: function(o) {}
+	};
+	jQuery(document).ready(function() {
+		ModalLogin.init("needlogin")
+	});
+	! function(e) {
+		e.cookieBar = function(c, o) {
+			if("cookies" == c) var i = "cookies";
+			else if("set" == c) i = "set";
+			else i = !1;
+			var n = {
+					message: "We use cookies to track usage and preferences.",
+					acceptButton: !0,
+					acceptText: "I Understand",
+					acceptFunction: function(e) {
+						"enabled" != e && "accepted" != e && (window.location = window.location.href)
+					},
+					declineButton: !1,
+					declineText: "Disable Cookies",
+					declineFunction: function(e) {
+						"enabled" != e && "accepted" != e || (window.location = window.location.href)
+					},
+					policyButton: !1,
+					policyText: "Privacy Policy",
+					policyURL: "/privacy-policy/",
+					autoEnable: !0,
+					acceptOnContinue: !1,
+					acceptOnScroll: !1,
+					acceptAnyClick: !1,
+					expireDays: 365,
+					renewOnVisit: !1,
+					forceShow: !1,
+					effect: "slide",
+					element: "body",
+					append: !1,
+					fixed: !1,
+					bottom: !1,
+					zindex: "",
+					domain: String(window.location.hostname),
+					referrer: String(document.referrer)
+				},
+				t = (c = e.extend(n, c), new Date);
+			t.setTime(t.getTime() + 864e5 * c.expireDays);
+			var a, l, r = "cb-enabled={value}; expires=" + (t = t.toGMTString()) + "; path=/",
+				d = "",
+				p = document.cookie.split("; ");
+			for(a = 0; a < p.length; a++) "cb-enabled" == (l = p[a].split("="))[0] && (d = l[1]);
+			if("" == d && "cookies" != i && c.autoEnable ? (d = "enabled", document.cookie = r.replace("{value}", "enabled")) : "accepted" != d && "declined" != d || "cookies" == i || !c.renewOnVisit || (document.cookie = r.replace("{value}", d)), c.acceptOnContinue && c.referrer.indexOf(c.domain) >= 0 && -1 == String(window.location.href).indexOf(c.policyURL) && "cookies" != i && "set" != i && "accepted" != d && "declined" != d && (i = "set", o = "accepted"), "cookies" == i) return "enabled" == d || "accepted" == d;
+			if("set" == i && ("accepted" == o || "declined" == o)) return document.cookie = r.replace("{value}", o), "accepted" == o;
+			var s = c.message.replace("{policy_url}", c.policyURL);
+			if(c.acceptButton) var u = '<a href="/" class="cb-enable">' + c.acceptText + "</a>";
+			else u = "";
+			if(c.declineButton) var f = '<a href="/" class="cb-disable">' + c.declineText + "</a>";
+			else f = "";
+			if(c.policyButton) var b = '<a href="' + c.policyURL + '" class="cb-policy" rel="nofollow">' + c.policyText + "</a>";
+			else b = "";
+			if(c.fixed)
+				if(c.bottom) var m = ' class="fixed bottom"';
+				else m = ' class="fixed"';
+			else m = "";
+			if("" != c.zindex) var k = ' style="z-index:' + c.zindex + ';"';
+			else k = "";
+			(c.forceShow || "enabled" == d || "" == d) && (c.append ? e(c.element).append('<div id="cookie-bar"' + m + k + "><p>" + s + u + f + b + "</p></div>") : e(c.element).prepend('<div id="cookie-bar"' + m + k + "><p>" + s + u + f + b + "</p></div>"));
+			var v = function(o) {
+					c.acceptOnScroll && e(document).off("scroll"), "function" == typeof o && o(d), "slide" == c.effect ? e("#cookie-bar").slideUp(300, function() {
+						e("#cookie-bar").remove()
+					}) : "fade" == c.effect ? e("#cookie-bar").fadeOut(300, function() {
+						e("#cookie-bar").remove()
+					}) : e("#cookie-bar").hide(0, function() {
+						e("#cookie-bar").remove()
+					}), e(document).unbind("click", x)
+				},
+				y = function() {
+					document.cookie = r.replace("{value}", "accepted"), v(c.acceptFunction)
+				},
+				x = function(c) {
+					e(c.target).hasClass("cb-policy") || y()
+				};
+			if(e("#cookie-bar .cb-enable").click(function() {
+					return y(), !1
+				}), e("#cookie-bar .cb-disable").click(function() {
+					return function() {
+						var e = new Date;
+						for(e.setTime(e.getTime() - 864e6), e = e.toGMTString(), p = document.cookie.split("; "), a = 0; a < p.length; a++)(l = p[a].split("="))[0].indexOf("_") >= 0 ? document.cookie = l[0] + "=0; expires=" + e + "; domain=" + c.domain.replace("www", "") + "; path=/" : document.cookie = l[0] + "=0; expires=" + e + "; path=/";
+						document.cookie = r.replace("{value}", "declined"), v(c.declineFunction)
+					}(), !1
+				}), c.acceptOnScroll) {
+				var w, h = e(document).scrollTop();
+				e(document).on("scroll", function() {
+					w = e(document).scrollTop(), (w > h ? w - h : h - w) >= Math.round(c.acceptOnScroll) && y()
+				})
+			}
+			c.acceptAnyClick && e(document).bind("click", x)
+		}
+	}(jQuery), jQuery(document).ready(function() {
+		jQuery.cookieBar(COOCKIEBAR_OPTIONS)
+	});
+	</script>
+	<link href="https://www.gs4u.net/en/s/358042.html" rel="alternate" hreflang="x-default" />
+	<link rel="preload" as="font" href="/templates/gs4u/fonts/fontawesome/webfonts/fa-brands-400.woff2?8.2.4" type="font/woff2" crossorigin="anonymous">
+	<link rel="preload" as="font" href="/templates/gs4u/fonts/fontawesome/webfonts/fa-solid-900.woff2?8.2.4" type="font/woff2" crossorigin="anonymous">
+	<link rel="preload" as="font" href="/media/jui/fonts/IcoMoon.woff?8.2.4" type="font/woff" crossorigin="anonymous">
+	<link rel="apple-touch-icon" href="https://www.gs4u.net/templates/gs4u/images/icons/logo192x192.png">
+	<link rel="icon" type="image/png" sizes="192x192" href="https://www.gs4u.net/templates/gs4u/images/icons/logo192x192.png">
+	<link rel="apple-touch-icon-precomposed" href="https://www.gs4u.net/templates/gs4u/images/icons/logo180x180.png">
+	<link rel="apple-touch-icon-precomposed" sizes="180x180" href="https://www.gs4u.net/templates/gs4u/images/icons/logo180x180.png">
+	<link rel="apple-touch-icon-precomposed" sizes="167x167" href="https://www.gs4u.net/templates/gs4u/images/icons/logo167x167.png">
+	<link rel="apple-touch-icon-precomposed" sizes="152x152" href="https://www.gs4u.net/templates/gs4u/images/icons/logo152x152.png">
+	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://www.gs4u.net/templates/gs4u/images/icons/logo144x144.png">
+	<link rel="icon" type="image/png" sizes="128x128" href="https://www.gs4u.net/templates/gs4u/images/icons/logo128x128.png">
+	<link rel="apple-touch-icon-precomposed" sizes="120x120" href="https://www.gs4u.net/templates/gs4u/images/icons/logo120x120.png">
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="https://www.gs4u.net/templates/gs4u/images/icons/logo114x114.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="https://www.gs4u.net/templates/gs4u/images/icons/logo96x96.png">
+	<link rel="apple-touch-icon-precomposed" sizes="76x76" href="https://www.gs4u.net/templates/gs4u/images/icons/logo76x76.png">
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="https://www.gs4u.net/templates/gs4u/images/icons/logo72x72.png">
+	<link rel="apple-touch-icon-precomposed" sizes="57x57" href="https://www.gs4u.net/templates/gs4u/images/icons/logo57x57.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="https://www.gs4u.net/templates/gs4u/images/icons/logo16x16.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="https://www.gs4u.net/templates/gs4u/images/icons/logo32x32.png">
+	<style>
+	header div.logobgfile div.logo-container {
+		background-image: url('https://www.gs4u.net/images/gs4u/logo_128x128.webp');
+		background-repeat: no-repeat;
+		background-size: 60px;
+		display: inline-block;
+	}
+
+	.nowebp header div.logobgfile {
+		background-image: url('https://www.gs4u.net/images/gs4u/logo_128x128.png');
+		background-repeat: no-repeat;
+		background-size: 60px;
+	}
+	</style>
+</head>
+
+<body class="site com_gs4uport view-server no-layout no-task itemid-108 fluid">
+	<script>
+	if(!document.createElement('canvas').toDataURL('image/webp').indexOf('data:image/webp') == 0) {
+		document.getElementsByTagName('html')[0].className = document.getElementsByTagName('html')[0].className + ' nowebp';
+	}
+	</script>
+	<!-- Body -->
+	<div class="body" id="top">
+		<div class="container-fluid">
+			<!-- Header -->
+			<header class="header">
+				<div class="header-inner clearfix logobgfile">
+					<a class="brand pull-left" href="https://www.gs4u.net/">
+						<div class="logo-container">
+							<picture class="logo">
+								<source srcset="https://www.gs4u.net/images/gs4u/logo_128x128.webp" type="image/webp"><img width="60" height="60" src="https://www.gs4u.net/images/gs4u/logo_128x128.png" alt="GS4u.net" /></picture>
+						</div>
+						<div class="sitetitle-sitedescription"> <span class="site-title" title="GS4u.net">GS4u.net</span>
+							<div class="site-description">Game servers monitoring</div>
+						</div>
+					</a>
+					<div class="header-search pull-right">
+						<div class="mod-languages">
+							<div class="pretext">
+								<p>Language: </p>
+							</div>
+							<ul class="lang-inline">
+								<li class="" dir="ltr">
+									<a href="https://www.gs4u.net/ru/s/358042.html"> <img src="/templates/gs4u/images/mod_languages/ru.svg" alt="Русский" title="Русский" /> </a>
+								</li>
+								<li class="" dir="ltr">
+									<a href="https://www.gs4u.net/de/s/358042.html"> <img src="/templates/gs4u/images/mod_languages/de.svg" alt="Deutsch" title="Deutsch" /> </a>
+								</li>
+								<li class="" dir="ltr">
+									<a href="https://www.gs4u.net/tr/s/358042.html"> <img src="/templates/gs4u/images/mod_languages/tr_tr.svg" alt="Türkçe (Türkiye)" title="Türkçe (Türkiye)" /> </a>
+								</li>
+								<li class="" dir="ltr">
+									<a href="https://www.gs4u.net/ua/s/358042.html"> <img src="/templates/gs4u/images/mod_languages/uk_ua.svg" alt="Українська мова" title="Українська мова" /> </a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</header>
+			<nav class="navigation">
+				<div class="navbar pull-left">
+					<a name="main-menu" class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse"> <span class="element-invisible">Toggle Navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </a>
+				</div>
+				<div class="nav-collapse">
+					<ul class="nav menu nav-pills mod-list">
+						<li class="item-102 default current active"><a href="/en/">Server list</a></li>
+						<li class="item-112"><a href="/en/addserver.html">Add server</a></li>
+						<li class="item-117"><a href="/en/games.html">Games</a></li>
+						<li class="item-231"><a href="/en/news.html">News</a></li>
+						<li class="item-247"><a href="/en/profile.html" class="needlogin">Profile</a></li>
+						<li class="item-137"><a href="/en/help.html">Help</a></li>
+					</ul>
+				</div>
+			</nav>
+			<div class="row-fluid">
+				<main id="content" class="span12">
+					<!-- Begin Content -->
+					<div id="system-message-container"> </div>
+					<!-- SID: 358042 -->
+					<div itemscope itemtype="http://schema.org/GameServer">
+						<div class="well2 well3 serverinfoheader ut3">
+							<div class="page-header">
+								<h1 itemprop="name" style="text-overflow: ellipsis; overflow: hidden;">
+                            SYBERIA UT			</h1> </div>
+							<h2>
+                        <span class="hasTooltip sysicon serverstatus online" title="Online"></span>&nbsp;&nbsp;217.20.66.49:7777 - Unreal Tournament 3 server from <span class="hasTooltip flagicon16 ru" title="Russian Federation"></span>&nbsp;Russian Federation, Mezhdurechensk		</h2> </div>
+						<div class="well well3">
+							<div class="row-fluid">
+								<div class="span6">
+									<div class="row-fluid">
+										<div class="page-header">
+											<div class="status"> <span class="title" itemscope itemprop="serverStatus" itemtype="http://schema.org/GameServerStatus">Status: </span> <span class="value"> <span class="serverstatustext online"><span title="Uptime: 96%" class="hasTooltip">Online</span> </span><span class="last-online-text"> </span> </span> <span class="serverid"><i class="fas fa-server"></i> Server ID: <b>358042</b></span> </div>
+										</div>
+										<div class="inlineblocktop baseinfo">
+											<div class="row-fluid">
+												<div class="span12">
+													<div class="row-fluid">
+														<div class="span12"> <span class="title"> <i class="fas fa-plug"></i> IP:Port</span> <span class="value"> <b><span id="server_addr_0">217.20.66.49:7777</span>&nbsp;&nbsp;<a name="copy_server_addr_0" href="javascript:void(0)" class="hasTooltip" id="copy_server_addr_0" aria-label="Click to copy" title="Click to copy"><i class="fas fa-copy"></i></a>
+															<script>
+															jQuery(document).ready(function() {
+																addCopyEventListener('copy_server_addr_0', "server_addr_0");
+															});
+															</script>
+															</b>
+															</span>
+														</div>
+													</div>
+													<div class="row-fluid">
+														<div class="span12"> <span class="title"> <i class="fas fa-play-circle"></i> Game:
+		</span> <span class="value">
+			<a aria-label="Unreal Tournament 3" href="https://www.gs4u.net/en/ut3/"><span class="hasTooltip gameicon16 ut3" title="Show all servers with the game: Unreal Tournament 3"></span></a> <b itemscope itemtype="http://schema.org/VideoGame" itemprop="game"> <a class="hasTooltip" title="Show all servers with the game: Unreal Tournament 3" href="https://www.gs4u.net/en/ut3/">Unreal Tournament 3					<span style="display: none;" itemprop="applicationCategory">Game</span>
+					<span style="display: none;" itemprop="operatingSystem">Windows</span>
+			</a>
+		</b> </span>
+														</div>
+													</div>
+													<div class="row-fluid">
+														<div class="span12"> <span class="title"> <i class="fas fa-users"></i> Players:</span>
+															<div class="value players">
+																<div class="playersonline">
+																	<div class="progress">
+																		<div class="bar" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="16" aria-label="Players" style="width: 6%"> <span class="sr-only"></span> </div>
+																	</div>
+																	<div class="text"> <b itemprop="playersOnline">
+                                                                    1</b> of <b>16</b> </div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="row-fluid">
+														<div class="span12"> <span class="title"><i class="fas fa-map-marked-alt"></i> Location:</span> <span class="value"><span class="hasTooltip flagicon16 ru" title="Russian Federation"></span>&nbsp;<b>Russian Federation, Mezhdurechensk</b></span>
+														</div>
+													</div>
+													<div class="row-fluid">
+														<div class="span12"> <span class="title"><i class="fas fa-calendar-alt"></i> Added: </span> <span class="value">3 days ago</span> </div>
+													</div>
+													<div class="row-fluid">
+														<div class="span12"> <span class="title"><i class="fas fa-history"></i> Information updated: </span> <span class="value" id="server_countdown">29 seconds ago</span>
+															<br> <a name="refreshbtn" href="javascript:void(0);" style="display: none; cursor: pointer;" class="btn refreshbtn">
+                                                        Update		</a> </div>
+													</div>
+													<div class="row-fluid">
+														<div class="span12">&nbsp;</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="inlineblocktop map">
+											<div class="row-fluid">
+												<div> Map: <a class="hasTooltip" title="Search server with a map: DM-Deck" href="https://www.gs4u.net/en/ut3/search/map-DM-Deck/">DM-Deck</a> </div>
+											</div>
+											<div class="row-fluid">
+												<div class="span12 map image">
+													<picture>
+														<source srcset="https://www.gs4u.net/en/map/ut3/DM-Deck.png 1x, https://www.gs4u.net/en/mapx2/ut3/DM-Deck.png 2x"> <img alt="DM-Deck" src="https://www.gs4u.net/en/map/ut3/DM-Deck.png" class="hasTooltip" title="DM-Deck"> </picture>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="span4 block-a">
+									<div class="row-fluid">
+										<div class="span12">
+											<div class="row-fluid">
+												<div class="span12 description">
+													<div class="page-header"> <i class="fas fa-info-circle"></i> Description </div>
+													<div class="row-fluid">
+														<div class="span12">
+															<div class="description-value">
+																<br>
+																<br>
+																<br>
+																<br>Are you the game server owner?
+																<br>If so, <a class="needlogin" href="https://www.gs4u.net/en/claimserver?id=358042" rel="nofollow">сlaim this server</a>!
+																<br>And add more information about this server!
+																<br>
+																<br>
+																<br>
+																<br> </div>
+															<div class="description-showfull">
+																<a href="#modaldialog" class="description-showfull-btn" data-toggle="modal" data-target="#server_description"> <i class="fas fa-plus-square"></i> Show full description </a>
+															</div>
+															<script>
+															jQuery(document).ready(function() {
+																jQuery("#server_description").on('show.bs.modal', function() {
+																	jQuery("#server_description .modal-body").html(jQuery('.description .description-value').html());
+																});
+															});
+															</script>
+															<div id="server_description" tabindex="-1" class="modal fade">
+																<div class="modal-dialog" role="document">
+																	<div class="modal-content">
+																		<div class="modal-header">
+																			<button type="button" class="close novalidate" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+																			<div class="title">SYBERIA UT</div>
+																		</div>
+																		<div class="modal-body"> </div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="span2 block-b">
+									<div class="row-fluid">
+										<div class="span12 ranking">
+											<div class="page-header"> <i class="fas fa-trophy"></i> Rating </div>
+											<div class="row-fluid position">
+												<div class="span12"> <a title="Users find it difficult to find this server. Click here to learn how to improve the position of server." class="hasTooltip" href="/how-to-get-to-top-position.html"><i class="fas fa-frown"></i></a> <span class="title">Position: </span>
+													<div class="position_n_of"><span class="position_n">17971</span><span class="slash">&nbsp;/&nbsp;</span><span class="position_of">22581</span></div>
+												</div>
+											</div>
+											<div class="row-fluid">
+												<div class="span12"> <i class="fas fa-chart-line"></i> Points: 102 </div>
+											</div>
+											<div class="row-fluid">
+												<div class="span12 premiumponts"> <i class="far fa-star"></i> <a href="/vote.html?id=358042" rel="nofollow">
+                                                Premium points: <b>0</b>
+                                            </a> </div>
+											</div>
+											<div class="row-fluid">
+												<div class="span12">
+													<a href="/vote.html?id=358042" rel="nofollow"> <i class="fas fa-thumbs-up"></i> To top! </a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row-fluid">
+										<div class="span12"></div>
+									</div>
+									<div class="row-fluid">
+										<div class="span12 share">
+											<div class="page-header"> <i class="fas fa-share-alt"></i> Share </div>
+											<div class="row-fluid">
+												<div class="span12">
+													<a aria-label="Share: Facebook" href="//www.facebook.com/sharer.php?u=https%3A%2F%2Fwww.gs4u.net%2Fen%2Fs%2F358042.html&picture=https%3A%2F%2Fwww.gs4u.net%2Fen%2F160x120%2Fs%2F358042.png&caption=SYBERIA+UT&description=Server+Unreal+Tournament+3" rel="nofollow noopener noreferrer" target="_blank"> <i class="fab fa-facebook fa-2x"></i> </a>
+													<a aria-label="Share: VK" href="//vk.com/share.php?url=https%3A%2F%2Fwww.gs4u.net%2Fen%2Fs%2F358042.html&image=https%3A%2F%2Fwww.gs4u.net%2Fen%2F160x120%2Fs%2F358042.png&description=Server+Unreal+Tournament+3&title=SYBERIA+UT" rel="nofollow noopener noreferrer" target="_blank"> <i class="fab fa-vk fa-2x"></i> </a>
+													<a aria-label="Share..." id="newshareapi" style="display: none" href="javascript:navigator.share({title:'SYBERIA UT',text:'Server Unreal Tournament 3',url:'https://www.gs4u.net/en/s/358042.html'})"> <i class="fa fa-share-alt-square fa-2x"></i> </a>
+													<script>
+													jQuery(document).ready(function() {
+														if(navigator.share) {
+															jQuery('#newshareapi').css('display', '');
+														}
+													});
+													</script>
+												</div>
+											</div>
+											<div class="row-fluid">
+												<div class="span12">
+													<div class="row-fluid">
+														<div class="span12">Shares: 0</div>
+													</div>
+												</div>
+											</div>
+											<div class="row-fluid">
+												<div class="span12">
+													<div class="row-fluid">
+														<div class="span12">Update every 10 days</div>
+													</div>
+												</div>
+											</div>
+											<div class="row-fluid claimserverlink">
+												<div class="span12">
+													<a class="needlogin" href="https://www.gs4u.net/en/claimserver?id=358042" rel="nofollow"> <i class="fas fa-user-shield"></i> сlaim this server </a>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row-fluid">
+							<div class="span12">
+								<div>
+									<div class="well well3"> <a class="pull-right hasTooltip" style="cursor:help;" title="Advertising is deactivated if the server has Premium Points."><i class="fas fa-times-circle"></i> disable advertising</a>
+										<div class="page-header">Advertising</div>
+										<div class="mod_gs4u_server_adv">
+											<div class="pane topserver top1">
+												<a href="https://www.gs4u.net/en/s/347520.html">
+													<div class="title"><span class="gameicon16 samp"></span>&nbsp;Top 1 server: </div>
+													<div class="name"> Ilhabela RolePlay | PC/Android </div>
+													<div>
+														<div class="ipport"> 135.148.83.231:7777 </div>
+														<div class="gamename"> GTA: San Andreas Multiplayer (SAMP) </div>
+													</div>
+												</a>
+											</div>
+											<div class="pane topserver">
+												<div class="second_title">servers from top:</div>
+												<div class="item n2">
+													<a href="https://www.gs4u.net/en/s/157543.html"> <span class="position">Top 2 server:</span> <span class="name n2">
+			DZLL / PvE Tenement |Quest|Kill or Raid=BAN|Building+|PvP Zone		</span> </a>
+												</div>
+												<div class="item n3">
+													<a href="https://www.gs4u.net/en/s/358029.html"> <span class="position">Top 3 server:</span> <span class="name n3">
+			[EUW] 128 tick - Competitive | WS GLOVES KNIFE		</span> </a>
+												</div>
+											</div>
+										</div>
+										<div style="text-align: right;"><a href="/en/help/paid-services/by-what-algorithm-do-servers-get-into-the-ad-unit.html">How do the servers get here <i class="fas fa-question-circle"></i></a></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<ul class="nav nav-tabs" id="tabs-innerTabs"></ul>
+						<div class="tab-content" id="tabs-innerContent">
+							<div id="tabs-inner-serverplayers" class="tab-pane active">
+								<div class="row-fluid">
+									<div class="span6">
+										<div class="row-fluid">
+											<div class="span12"></div>
+										</div>
+										<div class="row-fluid">
+											<div class="span12">
+												<table class="serverplayers tablesorter table table-striped table-hover" style="width:100%;">
+													<thead>
+														<tr>
+															<th class="players_table_header trhead name"><b>Player name</b></th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td class="other_color_text">dealenx</td>
+														</tr>
+
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="tabs-inner-serverbaners" class="tab-pane">
+								<div id="server_baners" class="accordion">
+									<script>
+									function baner_160x120_panel() {
+										var preview_element = document.getElementById('baner_160x120_preview');
+										show_banner_check(preview_element);
+										updateBanner(160, 120, true);
+									}
+									</script>
+									<div class="accordion-group">
+										<div class="accordion-heading"><strong><a href="#baner_160x120_panel" data-toggle="collapse" class="accordion-toggle collapsed">Banner 160x120</a></strong></div>
+										<div class="accordion-body collapse" id="baner_160x120_panel">
+											<div class="accordion-inner">
+												<div id="baner_160x120_preview">
+													<!--|v<a href="https://www.gs4u.net/en/s/358042.html" target="_blank"><picture><source srcset="https://www.gs4u.net/en/160x120/s/358042.png 1x, https://www.gs4u.net/en/160x120x2/s/358042.png 2x"><img style="width:160px;height:120px;background-image:url(https://www.gs4u.net/media/gs4u/img/sys/loading.gif?8.2.4);background-position: 50% 50%;background-repeat: no-repeat;" alt="Unreal Tournament 3 Server SYBERIA UT" title="SYBERIA UT" src="https://www.gs4u.net/en/160x120/s/358042.png"></picture></a>v|--></div>
+												<br />
+												<ul class="nav nav-tabs" id="160x120Tabs"></ul>
+												<div class="tab-content" id="160x120Content">
+													<div id="160x120-html" class="tab-pane active">
+														<p>
+															<label for="banner160x120txt_html">Code:</label>
+															<textarea id="banner160x120txt_html" style="width:99%;height:72px;">&lt;!-- Start of GS4u.net informer 160x120 --&gt;&lt;a href=&quot;https://www.gs4u.net/en/s/358042.html&quot; target=&quot;_blank&quot;&gt;&lt;picture&gt;&lt;source srcset=&quot;https://www.gs4u.net/en/160x120/s/358042.png 1x, https://www.gs4u.net/en/160x120x2/s/358042.png 2x&quot;&gt;&lt;img style=&quot;width:160px;height:120px;&quot; alt=&quot;Unreal Tournament 3 Server SYBERIA UT&quot; title=&quot;SYBERIA UT&quot; src=&quot;https://www.gs4u.net/en/160x120/s/358042.png&quot;&gt;&lt;/picture&gt;&lt;/a&gt;&lt;!-- End of GS4u.net informer 160x120 --&gt;</textarea>
+														</p>
+													</div>
+													<div id="160x120-bb" class="tab-pane">
+														<p>
+															<label for="banner160x120txt_bb">Code:</label>
+															<textarea id="banner160x120txt_bb" style="width:99%;height:50px; ;">[url=https://www.gs4u.net/en/s/358042.html][img]https://www.gs4u.net/en/160x120/s/358042.png[/img][/url]</textarea>
+														</p>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<script>
+									function baner_160x75_panel() {
+										var preview_element = document.getElementById('baner_160x75_preview');
+										show_banner_check(preview_element);
+										updateBanner(160, 75, true);
+									}
+									</script>
+									<div class="accordion-group">
+										<div class="accordion-heading"><strong><a href="#baner_160x75_panel" data-toggle="collapse" class="accordion-toggle collapsed">Banner 160x75</a></strong></div>
+										<div class="accordion-body collapse" id="baner_160x75_panel">
+											<div class="accordion-inner">
+												<div id="baner_160x75_preview">
+													<!--|v<a href="https://www.gs4u.net/en/s/358042.html" target="_blank"><picture><source srcset="https://www.gs4u.net/en/160x75/s/358042.png 1x, https://www.gs4u.net/en/160x75x2/s/358042.png 2x"><img style="width:160px;height:75px;background-image:url(https://www.gs4u.net/media/gs4u/img/sys/loading.gif?8.2.4);background-position: 50% 50%;background-repeat: no-repeat;" alt="Unreal Tournament 3 Server SYBERIA UT" title="SYBERIA UT" src="https://www.gs4u.net/en/160x75/s/358042.png"></picture></a>v|--></div>
+												<br />
+												<ul class="nav nav-tabs" id="160x75Tabs"></ul>
+												<div class="tab-content" id="160x75Content">
+													<div id="160x75-html" class="tab-pane active">
+														<p>
+															<label for="banner160x75txt_html">Code:</label>
+															<textarea id="banner160x75txt_html" style="width:99%;height:72px;">&lt;!-- Start of GS4u.net informer 160x75 --&gt;&lt;a href=&quot;https://www.gs4u.net/en/s/358042.html&quot; target=&quot;_blank&quot;&gt;&lt;picture&gt;&lt;source srcset=&quot;https://www.gs4u.net/en/160x75/s/358042.png 1x, https://www.gs4u.net/en/160x75x2/s/358042.png 2x&quot;&gt;&lt;img style=&quot;width:160px;height:75px;&quot; alt=&quot;Unreal Tournament 3 Server SYBERIA UT&quot; title=&quot;SYBERIA UT&quot; src=&quot;https://www.gs4u.net/en/160x75/s/358042.png&quot;&gt;&lt;/picture&gt;&lt;/a&gt;&lt;!-- End of GS4u.net informer 160x75 --&gt;</textarea>
+														</p>
+													</div>
+													<div id="160x75-bb" class="tab-pane">
+														<p>
+															<label for="banner160x75txt_bb">Code:</label>
+															<textarea id="banner160x75txt_bb" style="width:99%;height:50px; ;">[url=https://www.gs4u.net/en/s/358042.html][img]https://www.gs4u.net/en/160x75/s/358042.png[/img][/url]</textarea>
+														</p>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<script>
+									function baner_350x20_panel() {
+										var preview_element = document.getElementById('baner_350x20_preview');
+										show_banner_check(preview_element);
+										updateBanner(350, 20, true);
+									}
+									</script>
+									<div class="accordion-group">
+										<div class="accordion-heading"><strong><a href="#baner_350x20_panel" data-toggle="collapse" class="accordion-toggle collapsed">Banner 350x20</a></strong></div>
+										<div class="accordion-body collapse" id="baner_350x20_panel">
+											<div class="accordion-inner">
+												<div class="row-fluid">
+													<div class="span6">
+														<div id="baner_350x20_preview">
+															<!--|v<a href="https://www.gs4u.net/en/s/358042.html" target="_blank"><picture><source srcset="https://www.gs4u.net/en/350x20/s/358042.png 1x, https://www.gs4u.net/en/350x20x2/s/358042.png 2x"><img style="width:350px;height:20px;background-image:url(https://www.gs4u.net/media/gs4u/img/sys/loading.gif?8.2.4);background-position: 50% 50%;background-repeat: no-repeat;" alt="Unreal Tournament 3 Server SYBERIA UT" title="SYBERIA UT" src="https://www.gs4u.net/en/350x20/s/358042.png"></picture></a>v|--></div>
+													</div>
+													<div class="span6"> <b>Options:</b>
+														<br>
+														<br>
+														<input type="checkbox" style="display:inline;margin:0;" name="350x20_mybgcolor" id="350x20_mybgcolor" />
+														<label for="350x20_mybgcolor" id="350x20_mybgcolor_label" style="display: inline; margin: 0;">Set custom color</label>
+														<div id="baner_350x20_preview_option_bg_color">
+															<label for="350x20bgcolor">Background color</label>
+															<input type="text" name="350x20bgcolor" id="350x20bgcolor" class="minicolors" value="#000000" size="10" /> </div>
+														<script>
+														jQuery('#350x20_mybgcolor').on('change', function() {
+															updateBanner(350, 20, false);
+														});
+														jQuery('#350x20bgcolor').on('change', function() {
+															updateBanner(350, 20, true);
+														});
+														</script>
+													</div>
+												</div>
+												<br />
+												<ul class="nav nav-tabs" id="350x20Tabs"></ul>
+												<div class="tab-content" id="350x20Content">
+													<div id="350x20-html" class="tab-pane active">
+														<p>
+															<label for="banner350x20txt_html">Code:</label>
+															<textarea id="banner350x20txt_html" style="width:99%;height:72px;">&lt;!-- Start of GS4u.net informer 350x20 --&gt;&lt;a href=&quot;https://www.gs4u.net/en/s/358042.html&quot; target=&quot;_blank&quot;&gt;&lt;picture&gt;&lt;source srcset=&quot;https://www.gs4u.net/en/350x20/s/358042.png 1x, https://www.gs4u.net/en/350x20x2/s/358042.png 2x&quot;&gt;&lt;img style=&quot;width:350px;height:20px;&quot; alt=&quot;Unreal Tournament 3 Server SYBERIA UT&quot; title=&quot;SYBERIA UT&quot; src=&quot;https://www.gs4u.net/en/350x20/s/358042.png&quot;&gt;&lt;/picture&gt;&lt;/a&gt;&lt;!-- End of GS4u.net informer 350x20 --&gt;</textarea>
+														</p>
+													</div>
+													<div id="350x20-bb" class="tab-pane">
+														<p>
+															<label for="banner350x20txt_bb">Code:</label>
+															<textarea id="banner350x20txt_bb" style="width:99%;height:50px; ;">[url=https://www.gs4u.net/en/s/358042.html][img]https://www.gs4u.net/en/350x20/s/358042.png[/img][/url]</textarea>
+														</p>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<script>
+									function baner_56x15_panel() {
+										var preview_element = document.getElementById('baner_56x15_preview');
+										show_banner_check(preview_element);
+										updateBanner(56, 15, true);
+									}
+									</script>
+									<div class="accordion-group">
+										<div class="accordion-heading"><strong><a href="#baner_56x15_panel" data-toggle="collapse" class="accordion-toggle collapsed">The picture, showing only the status of the server 56x15</a></strong></div>
+										<div class="accordion-body collapse" id="baner_56x15_panel">
+											<div class="accordion-inner">
+												<div class="row-fluid">
+													<div class="span2">
+														<div id="baner_56x15_preview">
+															<!--|v<a href="https://www.gs4u.net/en/s/358042.html" target="_blank"><picture><source srcset="https://www.gs4u.net/en/56x15/s/358042.png 1x, https://www.gs4u.net/en/56x15x2/s/358042.png 2x"><img style="width:56px;height:15px;background-image:url(https://www.gs4u.net/media/gs4u/img/sys/loading.gif?8.2.4);background-position: 50% 50%;background-repeat: no-repeat;" alt="Unreal Tournament 3 Server SYBERIA UT" title="SYBERIA UT" src="https://www.gs4u.net/en/56x15/s/358042.png"></picture></a>v|--></div>
+													</div>
+													<div class="span10"> <b>Options:</b>
+														<br>
+														<br>
+														<input type="checkbox" style="display:inline;margin:0;" name="56x15_mybgcolor" id="56x15_mybgcolor" />
+														<label for="56x15_mybgcolor" id="56x15_mybgcolor_label" style="display: inline; margin: 0;">Set custom color</label>
+														<div id="baner_56x15_preview_option_bg_color">
+															<label for="56x15bgcolor">Background color</label>
+															<input type="text" name="56x15bgcolor" id="56x15bgcolor" class="minicolors" value="#000000" size="10" /> </div>
+														<script>
+														jQuery('#56x15_mybgcolor').on('change', function() {
+															updateBanner(56, 15, false);
+														});
+														jQuery('#56x15bgcolor').on('change', function() {
+															updateBanner(56, 15, true);
+														});
+														</script>
+													</div>
+												</div>
+												<br />
+												<ul class="nav nav-tabs" id="56x15Tabs"></ul>
+												<div class="tab-content" id="56x15Content">
+													<div id="56x15-html" class="tab-pane active">
+														<p>
+															<label for="banner56x15txt_html">Code:</label>
+															<textarea id="banner56x15txt_html" style="width:99%;height:72px;">&lt;!-- Start of GS4u.net informer 56x15 --&gt;&lt;a href=&quot;https://www.gs4u.net/en/s/358042.html&quot; target=&quot;_blank&quot;&gt;&lt;picture&gt;&lt;source srcset=&quot;https://www.gs4u.net/en/56x15/s/358042.png 1x, https://www.gs4u.net/en/56x15x2/s/358042.png 2x&quot;&gt;&lt;img style=&quot;width:56px;height:15px;&quot; alt=&quot;Unreal Tournament 3 Server SYBERIA UT&quot; title=&quot;SYBERIA UT&quot; src=&quot;https://www.gs4u.net/en/56x15/s/358042.png&quot;&gt;&lt;/picture&gt;&lt;/a&gt;&lt;!-- End of GS4u.net informer 56x15 --&gt;</textarea>
+														</p>
+													</div>
+													<div id="56x15-bb" class="tab-pane">
+														<p>
+															<label for="banner56x15txt_bb">Code:</label>
+															<textarea id="banner56x15txt_bb" style="width:99%;height:50px; ;">[url=https://www.gs4u.net/en/s/358042.html][img]https://www.gs4u.net/en/56x15/s/358042.png[/img][/url]</textarea>
+														</p>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="accordion-group">
+										<div class="accordion-heading"><strong><a href="#baner_webmodul_panel" data-toggle="collapse" class="accordion-toggle collapsed">HTML web modul</a></strong></div>
+										<div class="accordion-body collapse" id="baner_webmodul_panel">
+											<div class="accordion-inner">
+												<div class="row-fluid">
+													<div class="span6">
+														<div id="baner_webmodul_preview"></div>
+													</div>
+													<div class="span6">
+														<script>
+														function baner_webmodul_panel() {
+															var webmodulpreview = document.getElementById('baner_webmodul_preview');
+															if(webmodulpreview != null) {
+																if(webmodulpreview.innerHTML == '') {
+																	update_webmodul_src();
+																}
+															}
+														}
+														if(!window.GS4u) {
+															window.GS4u = {};
+														};
+														if(!GS4u.banners) {
+															GS4u.banners = {}
+														};
+														if(!GS4u.banners.iframe) {
+															GS4u.banners.iframe = {}
+														};
+														if(!GS4u.banners.iframe.style) {
+															GS4u.banners.iframe.style = {}
+														};
+														GS4u.banners.iframe.style.dark = {
+															'mac': '#6D6D6D',
+															'mahc': '#8F8F8F',
+															'mbg': '#1D1D1D',
+															'bg': '#4D4D4D',
+															'fg': '#FFFFFF',
+															'snb': '#666666',
+															'itc': '#AAAAAA',
+															'sna': '#D59120'
+														};
+														GS4u.banners.iframe.style.light = {
+															'mac': '#474747',
+															'mahc': '#000000',
+															'mbg': '#D1D1D1',
+															'bg': '#FFFFFF',
+															'fg': '#000000',
+															'snb': '#E0E0E0',
+															'itc': '#757575',
+															'sna': '#D59120'
+														};
+														</script>
+														<div class="row-fluid">
+															<div class="span6"> <b>1. Options:</b>
+																<br>
+																<br>
+																<label for="webmodul_width">Width</label>
+																<input type="range" name="webmodul_width" id="webmodul_width" min="200" max="500" value="450" oninput="resizeWebmodul();" onchange="resizeWebmodul();" />
+																<br>
+																<br>
+																<label for="webmodul_height">Height</label>
+																<input type="range" name="webmodul_height" id="webmodul_height" min="170" max="700" value="700" oninput="resizeWebmodul();" onchange="resizeWebmodul();" />
+																<br>
+																<input type="checkbox" style="display: inline; margin: 0;" checked="checked" name="webmodul_setplayersheight" id="webmodul_setplayersheight" onchange="resizeWebmodul();" />
+																<label for="webmodul_setplayersheight" id="webmodul_setplayersheight_label" style="display: inline; margin: 0;">Limit the height</label>
+																<br>
+																<br>
+																<input type="checkbox" style="display: inline; margin: 0;" checked="checked" name="webmodul_showmap" id="webmodul_showmap" onchange="resizeWebmodul();" />
+																<label for="webmodul_showmap" style="display: inline; margin: 0;">Show map</label>
+																<br>
+																<label for="webmodul_mapheight" id="webmodul_mapheight_label">Map image size</label>
+																<input type="range" name="webmodul_mapheight" id="webmodul_mapheight" min="85" max="120" value="120" oninput="resizeWebmodul();" onchange="resizeWebmodul();" />
+																<br>
+																<br>
+																<input type="checkbox" style="display: inline; margin: 0;" checked="checked" name="webmodul_showplayers" id="webmodul_showplayers" onchange="resizeWebmodul();" />
+																<label for="webmodul_showplayers" style="display: inline; margin: 0;">Show players</label>
+																<br>
+																<label for="webmodul_playersheight" id="webmodul_playersheight_label">Players block height</label>
+																<input type="range" name="webmodul_playersheight" id="webmodul_playersheight" min="50" max="460" value="210" oninput="resizeWebmodul();" onchange="resizeWebmodul();" />
+																<br>
+																<br>
+																<input type="checkbox" checked="checked" style="display: inline; margin: 0;" name="webmodul_showhourlystats" id="webmodul_showhourlystats" onchange="resizeWebmodul();" />
+																<label for="webmodul_showhourlystats" style="display: inline; margin: 0;">Show statistics</label>
+																<br>
+																<br>
+																<label for="webmodul_mainfontsize">Font size</label>
+																<input type="range" name="webmodul_mainfontsize" id="webmodul_mainfontsize" min="70" max="150" value="100" oninput="resizeWebmodul();" onchange="resizeWebmodul();" />
+																<br>
+																<br>
+																<label for="mac">Game link</label>
+																<input type="text" name="mac" id="mac" class="minicolors" value="#6D6D6D" size="10" onchange="resizeWebmodul();" />
+																<br>
+																<br>
+																<label for="mahc">Game link active</label>
+																<input type="text" name="mahc" id="mahc" class="minicolors" value="#8F8F8F" size="10" onchange="resizeWebmodul();" /> </div>
+															<div class="span6">
+																<br>
+																<br>
+																<label for="mbg">Background</label>
+																<input type="text" name="mbg" id="mbg" class="minicolors" value="#1D1D1D" size="10" onchange="resizeWebmodul();" />
+																<br>
+																<br>
+																<label for="bg">Info background</label>
+																<input type="text" name="bg" id="bg" class="minicolors" value="#4D4D4D" size="10" onchange="resizeWebmodul();" />
+																<br>
+																<br>
+																<label for="fg">Text</label>
+																<input type="text" name="fg" id="fg" class="minicolors" value="#FFFFFF" size="10" onchange="resizeWebmodul();" />
+																<br>
+																<br>
+																<label for="snb">Server name border</label>
+																<input type="text" name="snb" id="snb" class="minicolors" value="#666666" size="10" onchange="resizeWebmodul();" />
+																<br>
+																<br>
+																<label for="itc">Info title</label>
+																<input type="text" name="itc" id="itc" class="minicolors" value="#AAAAAA" size="10" onchange="resizeWebmodul();" />
+																<br>
+																<br>
+																<label for="sna">Server name</label>
+																<input type="text" name="sna" id="sna" class="minicolors" value="#D59120" size="10" onchange="resizeWebmodul();" /> </div>
+														</div>
+														<br> <span class="btn save" onclick="update_webmodul_src();">2. <i class="fas fa-save"></i> Save</span>
+														<hr> <span class="btn" onclick="load_webmodul_color_config(GS4u.banners.iframe.style.dark);"><i class="fas fa-circle"></i> Dark design</span> <span class="btn" onclick="load_webmodul_color_config(GS4u.banners.iframe.style.light);"><i class="far fa-circle"></i> Light design</span> </div>
+												</div>
+												<br />
+												<ul class="nav nav-tabs" id="webmodulTabs"></ul>
+												<div class="tab-content" id="webmodulContent">
+													<div id="webmodul-html" class="tab-pane active">
+														<p>
+															<label for="bannerwebmodultxt_html">Code:</label>
+															<textarea id="bannerwebmodultxt_html" style="width:99%;height:72px;"></textarea>
+														</p>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="accordion-group">
+										<div class="accordion-heading"><strong><a href="#baner_json_panel" data-toggle="collapse" class="accordion-toggle collapsed">JSON and JSONP</a></strong></div>
+										<div class="accordion-body collapse" id="baner_json_panel">
+											<div class="accordion-inner">
+												<div id="baner_json_preview">
+													<p><span><i class="fas fa-exclamation-triangle"></i> Available only for servers with <a title="The server uses the monitoring function on a paid basis. As a reward, the server receives bonuses." aria-label="The server uses the monitoring function on a paid basis. As a reward, the server receives bonuses." href="/plus-server.html" class="hasTooltip plus-server-status"><i class="fas fa-plus-square"></i> PLUS Server</a> status</span></p>
+													<p><a href="https://gs4u.github.io/jsonp.html" target="_blank">Example of use for JSONP</a> and <a href="https://github.com/gs4u/gs4u.github.io/blob/master/jsonp.html" target="_blank">the source code of the example</a></p>
+												</div>
+												<br />
+												<ul class="nav nav-tabs" id="jsonTabs"></ul>
+												<div class="tab-content" id="jsonContent">
+													<div id="json-html" class="tab-pane active">
+														<p>
+															<label for="bannerjsontxt_html">Code:</label>
+															<textarea id="bannerjsontxt_html" style="width:99%;height:500px;">&lt;!-- Start of GS4u.net informer JSON --&gt; &lt;div class=&quot;gs4u-server loading&quot; id=&quot;gs4u_358042&quot;&gt; &lt;div class=&quot;name&quot;&gt;&lt;span class=&quot;title&quot;&gt;Name: &lt;/span&gt;&lt;span class=&quot;value&quot;&gt;#name#&lt;/span&gt;&lt;/div&gt; &lt;div class=&quot;address&quot;&gt;&lt;span class=&quot;title&quot;&gt;IP: &lt;/span&gt;&lt;span class=&quot;value&quot;&gt;#ip#:#port#&lt;/span&gt;&lt;/div&gt; &lt;div class=&quot;game&quot;&gt;&lt;span class=&quot;title&quot;&gt;Game: &lt;/span&gt;&lt;span class=&quot;value&quot;&gt;#game#&lt;/span&gt;&lt;/div&gt; &lt;div class=&quot;map&quot;&gt;&lt;span class=&quot;title&quot;&gt;Map: &lt;/span&gt;&lt;span class=&quot;value&quot;&gt;#map#&lt;/span&gt;&lt;/div&gt; &lt;div class=&quot;players&quot;&gt;&lt;span class=&quot;title&quot;&gt;Players: &lt;/span&gt;&lt;span class=&quot;value&quot;&gt;#players# / #players_max# (Peak: #max_online_players#)&lt;/span&gt;&lt;/div&gt; &lt;div class=&quot;players_list&quot;&gt;&lt;span class=&quot;title&quot;&gt;Players: &lt;/span&gt;&lt;span class=&quot;value&quot;&gt;#players_list#&lt;/span&gt;&lt;/div&gt; &lt;div class=&quot;extras&quot;&gt;&lt;span class=&quot;title&quot;&gt;Options: &lt;/span&gt;&lt;span class=&quot;value&quot;&gt;#extras#&lt;/span&gt;&lt;/div&gt; &lt;/div&gt; &lt;script src=&quot;https://www.gs4u.net/media/gs4u/js/server_banner_jsonp.js&quot;&gt;&lt;/script&gt; &lt;script async src=&quot;https://www.gs4u.net/en/s/358042.json?callback=GS4u.parseServerResponse&quot;&gt;&lt;/script&gt; &lt;script&gt; GS4u.translate[&#039;name&#039;] = &#039;Player name&#039;; GS4u.translate[&#039;score&#039;] = &#039;Score&#039;; GS4u.translate[&#039;time&#039;] = &#039;Time&#039;; GS4u.translate[&#039;ping&#039;] = &#039;Ping&#039;; GS4u.translate[&#039;deaths&#039;] = &#039;Deaths&#039;; GS4u.translate[&#039;team&#039;] = &#039;Team&#039;; GS4u.translate[&#039;kills&#039;] = &#039;Kills&#039;; GS4u.translate[&#039;assists&#039;] = &#039;Assists&#039;; GS4u.translate[&#039;money&#039;] = &#039;Money&#039;; GS4u.translate[&#039;lvl&#039;] = &#039;Level&#039;; &lt;/script&gt; &lt;!-- End of GS4u.net informer JSON --&gt; </textarea>
+														</p>
+													</div>
+													<div id="json-bb" class="tab-pane">
+														<p>
+															<label for="bannerjsontxt_bb">URL:</label>
+															<textarea id="bannerjsontxt_bb" style="width:99%;height:50px; ;">https://www.gs4u.net/en/s/358042.json</textarea>
+														</p>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="tabs-inner-serveroptions" class="tab-pane">
+								<table class="table table-striped table-hover">
+									<tr class="tr2">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                    averageskillrating&nbsp;
+                                </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;1000.000000 </td>
+									</tr>
+									<tr class="tr1">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                bisdedicated&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;True </td>
+									</tr>
+									<tr class="tr2">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                bots&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;1 </td>
+									</tr>
+									<tr class="tr1">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                bots_skill&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;4 </td>
+									</tr>
+									<tr class="tr2">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                bots_vs&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;0 </td>
+									</tr>
+									<tr class="tr1">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                busesstats&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;True </td>
+									</tr>
+									<tr class="tr2">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                description&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp; </td>
+									</tr>
+									<tr class="tr1">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                engineversion&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;3809 </td>
+									</tr>
+									<tr class="tr2">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                forcerespawn&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;0 </td>
+									</tr>
+									<tr class="tr1">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                gamemode&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;UTGame.UTDeathmatch </td>
+									</tr>
+									<tr class="tr2">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                goalscore&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;50 </td>
+									</tr>
+									<tr class="tr1">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                hostport&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;7777 </td>
+									</tr>
+									<tr class="tr2">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                minnetversion&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;3467 </td>
+									</tr>
+									<tr class="tr1">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                mutators_custom&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;Orb Fix / Dodge Jump </td>
+									</tr>
+									<tr class="tr2">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                mutators_default&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp; </td>
+									</tr>
+									<tr class="tr1">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                numpublicconnections&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;16 </td>
+									</tr>
+									<tr class="tr2">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                owningplayerid&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;10088259 </td>
+									</tr>
+									<tr class="tr1">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                owningplayername&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;SYBERIA UT </td>
+									</tr>
+									<tr class="tr2">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                p1073741829&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;UTMutator_utcomp3v4b2UTMutator_OrbFixMutDodgeJumpUTMutator_Show_Damage </td>
+									</tr>
+									<tr class="tr1">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                p268435706&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;6 </td>
+									</tr>
+									<tr class="tr2">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                p268435968&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;0 </td>
+									</tr>
+									<tr class="tr1">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                p268435969&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;0 </td>
+									</tr>
+									<tr class="tr2">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                password&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;0 </td>
+									</tr>
+									<tr class="tr1">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                pure&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;1 </td>
+									</tr>
+									<tr class="tr2">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                s1&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;0 </td>
+									</tr>
+									<tr class="tr1">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                s11&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;0 </td>
+									</tr>
+									<tr class="tr2">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                s12&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;0 </td>
+									</tr>
+									<tr class="tr1">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                s13&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;0 </td>
+									</tr>
+									<tr class="tr2">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                s14&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;1 </td>
+									</tr>
+									<tr class="tr1">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                s32779&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;0 </td>
+									</tr>
+									<tr class="tr2">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                s9&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;0 </td>
+									</tr>
+									<tr class="tr1">
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"><b>
+                                timelimit&nbsp;
+                            </b></td>
+										<td class="break-word" style="max-width: 0; overflow: hidden; text-overflow: ellipsis;"> &nbsp;15 </td>
+									</tr>
+								</table>
+							</div>
+							<div id="tabs-inner-statistic" class="tab-pane">
+								<script>
+								jQuery(window).on('load', function() {
+									Chart.defaults.global.defaultColor = "#db8";
+									Chart.defaults.global.defaultFontColor = "#ffffff";
+									Chart.defaults.global.elements.line.backgroundColor = "rgba(255,255,255,0.1)";
+									Chart.defaults.global.elements.line.borderColor = "#999";
+									Chart.defaults.global.elements.point.backgroundColor = "#db8";
+									Chart.defaults.global.elements.point.borderColor = "#db8";
+								});
+								window.plChartOptions = {
+									"scales": {
+										"yAxes": [{
+											"ticks": {
+												"beginAtZero": true,
+												suggestedMin: 0,
+												suggestedMax: 10,
+											},
+											id: "players"
+										}, {
+											"ticks": {
+												"beginAtZero": true,
+												min: 0,
+												max: 100,
+											},
+											id: "percent",
+											position: 'right',
+											display: false,
+											gridLines: {
+												drawOnChartArea: false, // only want the grid lines for one axis to show up
+											}
+										}],
+										"xAxes": [{
+											"ticks": {
+												"display": false,
+												"callback": function(value, index, values) {
+													if(!value || value.indexOf(':') === -1) {
+														return value;
+													}
+													var d = new Date(value.replace(" ", "T") + ":00.000Z");
+													return d.toLocaleDateString() + " " + d.toLocaleTimeString();
+												}
+											}
+										}]
+									},
+									"tooltips": {
+										"mode": "index",
+										"intersect": false
+									}
+								};
+								window.rangChartOptions = {
+									"scales": {
+										"yAxes": [{
+											"ticks": {
+												reverse: true
+											},
+											id: "ordering"
+										}, {
+											"ticks": {
+												"beginAtZero": true
+											},
+											id: "premium",
+											display: false,
+											gridLines: {
+												drawOnChartArea: false, // only want the grid lines for one axis to show up
+											}
+										}, {
+											"ticks": {
+												"beginAtZero": true
+											},
+											id: "points",
+											position: 'right',
+										}],
+										"xAxes": [{
+											"ticks": {
+												"display": false,
+												"callback": function(value, index, values) {
+													if(!value || value.indexOf(':') === -1) {
+														return value;
+													}
+													var d = new Date(value.replace(" ", "T") + ":00.000Z");
+													return d.toLocaleDateString() + " " + d.toLocaleTimeString();
+												}
+											}
+										}]
+									},
+									"tooltips": {
+										//"mode": "index",
+										"intersect": false
+									}
+								};
+								</script>
+								<div class="serverstatistic">
+									<div class="btn-group statistics_actions">
+										<div class="btn btn-small minute">minutely</div>
+										<div class="btn btn-small hour active">hourly</div>
+										<div class="btn btn-small day">daily</div>
+										<div class="btn btn-small month">monthly</div>
+									</div>
+									<br>
+									<br>
+									<div class="statstitle">
+										<div class="general">Online players by time</div>
+									</div>
+									<div class="players_statistics"></div>
+									<br>
+									<br>
+									<div class="btn-group statistics_actions">
+										<div class="btn btn-small minute">minutely</div>
+										<div class="btn btn-small hour active">hourly</div>
+										<div class="btn btn-small day">daily</div>
+										<div class="btn btn-small month">monthly</div>
+									</div>
+									<br>
+									<br>
+									<div class="statstitle">
+										<div class="general">Rating and points</div>
+									</div>
+									<div class="rang_statistics"></div>
+								</div>
+								<h3>Players statistics for 24 hours</h3> <span class="information">This function is available only to servers with Premium points.</span> </div>
+						</div>
+					</div>
+					<div class="clearfix"></div>
+					<!-- End Content -->
+				</main>
+			</div>
+		</div>
+	</div>
+	<!-- Footer -->
+	<footer class="footer">
+		<div class="container-fluid">
+			<hr />
+			<ul class="nav menu nav-pills mod-list">
+				<li class="item-484"><a href="/en/articles.html">Articles</a></li>
+				<li class="item-126"><a href="/en/privacy-policy.html">Privacy policy</a></li>
+				<li class="item-127"><a href="/en/impressum.html">Impressum</a></li>
+				<li class="item-279"><a href="/en/aboutus.html">About us</a></li>
+				<li class="item-113"><a href="/en/contact.html">Contact</a></li>
+				<li class="item-715"><a href="/en/terms-and-conditions.html">Terms and conditions</a></li>
+			</ul>
+			<div class="custom">
+				<p style="text-align: right; font-size: 0.9em; color: #777;"><span style="font-size: 1.3em; border: 1px solid #777; padding: 2px; margin-right: 5px;">16+</span> The Website may contain content that is not intended for persons under 16 years old</p>
+			</div>
+			<p class="pull-right"> <a href="#top" id="back-top">
+                Back to Top				</a> </p>
+			<p> &copy; 2008 - 2024 GS4u.net | Version: 3.6.8 </p>
+		</div>
+	</footer>
+	<div id="a_href_modal_image" tabindex="-1" class="modal fade">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close novalidate" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+					<div class="title">&nbsp;</div>
+				</div>
+				<div class="modal-body"> </div>
+			</div>
+		</div>
+	</div>
+	<script>
+	jQuery('a.modal').on('touch click', function(e) {
+		let _this = jQuery(this);
+		let _href = _this.prop('href');
+		let _modal_body = jQuery('#a_href_modal_image .modal-body');
+		_modal_body.empty();
+		if(_href.match(/\.(jpeg|jpg|gif|png|webp)$/)) {
+			_modal_body.append(jQuery('<img src="' + _href + '" alt="">'));
+		} else {
+			let _iframe = jQuery('<iframe>');
+			_iframe.on('load', function() {
+				_iframe.css({
+					'height': (_iframe[0].contentWindow.document.body.scrollHeight + 100) + 'px'
+				});
+			});
+			_modal_body.append(_iframe);
+			_iframe.prop('src', _href);
+		}
+		jQuery('#a_href_modal_image').modal('show');
+		e.stopImmediatePropagation();
+		e.preventDefault();
+		return false;
+	});
+	</script>
+	<div id="login_dialog" tabindex="-1" class="modal fade">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close novalidate" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+					<div class="title">Log in</div>
+				</div>
+				<div class="modal-body"> </div>
+			</div>
+		</div>
+	</div>
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-SFFF3L3V47"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+
+	function gtag() {
+		dataLayer.push(arguments);
+	}
+	gtag('js', new Date());
+	gtag('config', 'G-SFFF3L3V47');
+	</script>
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=AW-11054149815"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+
+	function gtag() {
+		dataLayer.push(arguments);
+	}
+	gtag('js', new Date());
+	gtag('config', 'AW-11054149815');
+	</script>
+</body>
+
+</html>
