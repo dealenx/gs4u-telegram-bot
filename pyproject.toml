@@ -5,6 +5,9 @@ description = ""
 authors = ["dealenx <dealenx@gmail.com>"]
 readme = "README.md"
 
+[tool.poetry.scripts]
+default = "gs4u_telegram_bot.main:run"
+
 [tool.poetry.dependencies]
 python = "^3.10"
 sqlalchemy = "^2.0.36"
@@ -13,6 +16,7 @@ telegram = "^0.0.1"
 pytelegrambotapi = "^4.23.0"
 python-telegram-bot = "^21.7"
 aiogram = "^3.14.0"
+beautifulsoup4 = "^4.12.3"
 
 
 [build-system]

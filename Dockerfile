@@ -18,7 +18,7 @@ RUN poetry config virtualenvs.create false && \
 COPY . /app/
 
 # Set the entrypoint (replace "your_script.py" with your main Python script)
-CMD ["fastapi", "run", "./main.py", "--port", "8000"]
+CMD ["poetry", "run", "default"]
 
 
 
