@@ -45,6 +45,6 @@ def run():
         time.sleep(20)
 
 if __name__ == '__main__':
-    run_bot()
+    # run_bot()
     run()
 

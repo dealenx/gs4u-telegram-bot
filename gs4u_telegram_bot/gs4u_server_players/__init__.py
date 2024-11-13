@@ -12,6 +12,8 @@ from sqlalchemy.orm import sessionmaker
 
 load_dotenv()
 SERVER_GS4U_URL = os.getenv("SERVER_GS4U_URL")
+
+DB_FILE_PATH=os.getenv("DB_FILE_PATH")
 # URL сервера
 server_url = SERVER_GS4U_URL
 
@@ -27,7 +29,7 @@ class Player(Base):
     name = Column(String)
 
 # Создание двигателя базы данных
-engine = create_engine(f'sqlite:///{db_name}')
+engine = create_engine(f'sqlite:///{DB_FILE_PATH}')
 Base.metadata.create_all(engine)
 
 # Создание сессии
