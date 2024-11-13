@@ -4,16 +4,22 @@ import time
 from dotenv import load_dotenv
 import os
 from dotenv import load_dotenv
+
+from gs4u_telegram_bot.telegram_bot import run_bot
+
 load_dotenv()
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHAT_ID=os.getenv("CHAT_ID")
 import urllib, requests
 from gs4u_telegram_bot import gs4u_server_players
 
-# load_dotenv()
+load_dotenv()
 SERVER_GS4U_URL = os.getenv("SERVER_GS4U_URL")
 # URL сервера
 server_url = SERVER_GS4U_URL
+
+
+
 def run():
     # Основная часть программы
     while True:
@@ -39,5 +45,6 @@ def run():
         time.sleep(20)
 
 if __name__ == '__main__':
+    run_bot()
     run()
 
