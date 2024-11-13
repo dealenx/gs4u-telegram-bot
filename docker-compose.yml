@@ -12,6 +12,7 @@ services:
       - SERVER_GS4U_URL=${SERVER_GS4U_URL}
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - CHAT_ID=${CHAT_ID}
+      - DB_FILE_PATH=/app/server_players.db
     logging:
       driver: "json-file"
       options:

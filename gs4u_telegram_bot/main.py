@@ -1,11 +1,9 @@
 import os
 from datetime import datetime
 import time
-from dotenv import load_dotenv
 import os
 from dotenv import load_dotenv
 
-from gs4u_telegram_bot.telegram_bot import run_bot
 
 load_dotenv()
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
