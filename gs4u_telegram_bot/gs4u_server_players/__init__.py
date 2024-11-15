@@ -42,20 +42,21 @@ def get_server_players(url):
     print(response.status_code)
     content = response.content
     # content = "<html></html>"
-    # with open('mock/index_2_players.html', 'r') as file:
+    # with open('mock/index_tdm_players.html', 'r') as file:
     #      content = file.read()
     soup = BeautifulSoup(content, 'html.parser')
 
-    # Найти таблицу с игроками
-    table = soup.find('table', class_='serverplayers tablesorter table table-striped table-hover')
+    # Find all tables with the specified class
+    tables = soup.find_all('table', class_='serverplayers tablesorter table table-striped table-hover')
 
-    # Извлечь имена игроков из таблицы
     players = []
-    if table is not None:
+    for table in tables:
+        # Extract player names from each table
         for row in table.find_all('tr'):
-            if row.find('td') != None:
-                player_name = row.find('td').text
+            if row.find('td') is not None:
+                player_name = row.find('td').text.strip() #Added strip() to remove leading/trailing whitespace
                 players.append(player_name)
+
 
     return players
 
@@ -85,3 +86,23 @@ def update_player_table(current_players):
         session.add(new_player)
     session.commit()
 
+if __name__ == '__main__':
+    # Основная часть программы
+    while True:
+        # Получить текущий список игроков
+        current_players = get_server_players(server_url)
+        print("current_players", current_players)
+
+        # Проверить на наличие новых игроков
+        new_players = check_new_players(current_players)
+
+        # Обновить таблицу игроков
+        update_player_table(current_players)
+
+        # Вывести результаты
+        if new_players:
+            message = f"Зашли игроки: {', '.join(new_players)}"
+            print(f"{datetime.now()}: {message}")
+
+
+        time.sleep(20)
