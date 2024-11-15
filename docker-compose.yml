@@ -18,4 +18,5 @@ services:
       options:
         max-file: "5"   # количество файлов
         max-size: "10m" # размер файла лога
+    restart: unless-stopped
 
