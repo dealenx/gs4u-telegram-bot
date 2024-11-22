@@ -14,6 +14,8 @@ load_dotenv()
 SERVER_GS4U_URL = os.getenv("SERVER_GS4U_URL")
 
 DB_FILE_PATH=os.getenv("DB_FILE_PATH")
+
+SERVER_NAME=os.getenv("SERVER_NAME")
 # URL сервера
 server_url = SERVER_GS4U_URL
 
@@ -101,7 +103,7 @@ if __name__ == '__main__':
 
         # Вывести результаты
         if new_players:
-            message = f"Зашли игроки: {', '.join(new_players)}"
+            message = f"Зашли игроки: {', '.join(new_players)} на {SERVER_NAME}"
             print(f"{datetime.now()}: {message}")
 
 

@@ -13,6 +13,9 @@ from gs4u_telegram_bot import gs4u_server_players
 
 load_dotenv()
 SERVER_GS4U_URL = os.getenv("SERVER_GS4U_URL")
+
+SERVER_NAME=os.getenv("SERVER_NAME")
+
 # URL сервера
 server_url = SERVER_GS4U_URL
 
@@ -33,7 +36,7 @@ def run():
 
         # Вывести результаты
         if new_players:
-            message = f"Зашли игроки: {', '.join(new_players)}"
+            message = f"Зашли игроки: {', '.join(new_players)} на {SERVER_NAME}"
             print(f"{datetime.now()}: {message}")
 
             url = 'https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s' % (
